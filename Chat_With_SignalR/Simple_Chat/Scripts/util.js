@@ -6,8 +6,8 @@
     
     chat.client.addMessage = function (name, message) {
     
-        $('#chatroom').append('<p><b>' + htmlEncode(name)
-            + '</b>: ' + htmlEncode(message) + '</p>');
+        $('#chatroom').append('<p><b>' + name
+            + '</b>: ' + message + '</p>');
     };
 
     
@@ -62,10 +62,7 @@
     });
 });
 
-function htmlEncode(value) {
-    var encodedValue = $('<div />').text(value).html();
-    return encodedValue;
-}
+
 
 function AddUser(id, name) {
 

@@ -15,17 +15,19 @@
             <input id="btnLogin" type="button" value="Sing In" />
         </div>
         <div id="chatBody">
+            <div id="main_div" style="position:absolute">
+                <div id="chatroom" style="position:absolute;left:100px;top:0px; width:300px;height:400px; overflow:auto"></div>
 
-            <div id="chatroom" style="position:absolute;left:100px;top:0px; width:300px;height:400px; overflow:auto"></div>
-
-            <div id="chatusers" style=" background-color:antiquewhite; position:absolute;width:100px;height:500px; left:0px;top:0px">
+                <div id="inputForm">
+                    <input type="text" id="message" style="position:absolute; width:200px;height:40px;left:100px;top:460px" />
+                    <input type="button" id="sendmessage" value="send" style="position:absolute; width:100px;height:100px;left:300px;top:400px" />
+                </div>
+            </div>
+            <div id="chatusers" style="background-color:antiquewhite; position:absolute;width:auto;height:500px; left:0px;top:0px">
                 <div id="header"></div>
-                <p><b>Active Users...</b></p>
+                <p style="color:red"><b>Active Users...</b></p>
             </div>
-            <div id="inputForm">
-                <input type="text" id="message" style="position:absolute; width:200px;height:100px;left:100px;top:400px" />
-                <input type="button" id="sendmessage" value="send" style="position:absolute; width:100px;height:100px;left:300px;top:400px" />
-            </div>
+            
         </div>
         <input id="hdId" type="hidden" />
         <input id="username" type="hidden" />

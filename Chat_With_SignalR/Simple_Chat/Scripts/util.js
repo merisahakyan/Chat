@@ -100,18 +100,4 @@ function AddUser(id, name) {
     }
 }
 
-//function OnConnected(id, userName, allUsers) {
 
-//    $('#loginBlock').hide();
-//    $('#chatBody').show();
-
-//    $('#hdId').val(id);
-//    $('#username').val(userName);
-//    $('#header').html('<h3>Welcome, ' + userName + '</h3>');
-
-
-//    for (var i = 0; i < allUsers.length; i++) {
-
-//        AddUser(allUsers[i].ConnectionId, allUsers[i].Name);
-//    }
-//}

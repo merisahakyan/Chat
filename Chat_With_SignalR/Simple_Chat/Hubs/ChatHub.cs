@@ -5,10 +5,12 @@
     using System.Threading.Tasks;
     using Microsoft.AspNet.SignalR;
     using Models;
+    using System;
 
     public class ChatHub : Hub
     {
         private static List<User> Users = new List<User>();
+        private static List<Room> Rooms = new List<Room>();
 
         public void Send(string name, string message)
         {
@@ -40,6 +42,38 @@
             return base.OnDisconnected(stopCalled);
         }
 
-        
+        public void Create(string group)
+        {
+            var id = Context.ConnectionId;
+            var guid = new Guid();
+            Rooms.Add(new Room
+            {
+                RoomID = guid,
+                RoomName = group,
+                Members = new List<User> {
+                    new User
+                    { ConnectionId=Context.ConnectionId,
+                    Name =Users.Where(p=>p.ConnectionId==Context.ConnectionId).First().Name}
+                }
+            });
+            Clients.Caller.onCreating(Rooms);
+            Clients.AllExcept(id).onNewGroupCreating(guid, group);
+        }
+
+
+
+        public void OnRoomConnect(string id, string username, string roomname)
+        {
+            Rooms.Where(p => p.RoomName == roomname).First().Members.Add(new User
+            {
+                ConnectionId = id,
+                Name = username
+            });
+
+            Clients.Caller.onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
+            Clients.AllExcept(id).onNewRoomConnecting(id, username, Rooms.Where(p => p.RoomName == roomname).First().RoomID);
+
+        }
+
     }
 }

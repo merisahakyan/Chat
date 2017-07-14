@@ -1,7 +1,7 @@
-﻿@{
+﻿
+@{
     Layout = null;
 }
-
 
 <html>
 <head>
@@ -9,11 +9,11 @@
 </head>
 <body>
     <div class="main">
-        <div id="loginBlock">
-            Enter login:<br />
-            <input id="txtUserName" type="text" />
-            <input id="btnLogin" type="button" value="Sing In" />
-        </div>
+
+        <input type="hidden" id="userid" value=@ViewData["userid"] />
+        <input type="hidden" id="roomid" value=@ViewData["roomid"] />
+        <input type="hidden" id="username" value=@ViewData["username"] />
+        <input type="hidden" id="roomname" value=@ViewData["roomname"] />
         <div id="chatBody">
             <div id="main_div">
                 <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:400px; overflow:auto"></div>
@@ -24,18 +24,16 @@
                 </div>
             </div>
             <div style="background-color:antiquewhite; position:absolute;width:250px;height:500px; left:0px;top:0px">
-                <div id="chatusers">
-                    <div id="header"></div>
-                    <p style="color:red"><b>Active Users...</b></p>
-
-                </div>
-                <div id="allrooms">
-                    <p style="color:red"><b>Rooms</b></p>
-                    <div id="rooms" style="overflow:auto">
-
+                <div id="members">
+                    <div id="header">
+                        <p>
+                            <b> Room  @ViewData["roomname"]</b>
+                        </p>
                     </div>
-                    <input type="button" style="width:250px" id="create" value="Create Room" />
+                    <p style="color:red"><b>Members</b></p>
+
                 </div>
+
             </div>
         </div>
 
@@ -46,7 +44,9 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2-preview1.min.js"></script>
     <script src="~/signalr/hubs"></script>
-    <script src="~/Scripts/util.js"></script>
+    <script src="~/Scripts/room.js"></script>
+
 
 </body>
 </html>
+

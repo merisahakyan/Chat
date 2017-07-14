@@ -12,19 +12,26 @@
 
     };
 
-    chat.client.onConnected = function (id, userName, allUsers) {
+    chat.client.onConnected = function (id, userName, allUsers, rooms) {
 
         $('#loginBlock').hide();
         $('#chatBody').show();
 
         $('#hdId').val(id);
         $('#username').val(userName);
-        $('#header').html('<h3>Welcome, ' + userName + '</h3>');
+        var name = userName;
+        if (userName.length > 15)
+            var name = userName.substr(0, 15) + '...';
+
+        $('#header').html('<h3  title="' + userName + '">Welcome, ' + name + '</h3>');
 
 
         for (var i = 0; i < allUsers.length; i++) {
 
             AddUser(allUsers[i].ConnectionId, allUsers[i].Name);
+        }
+        for (var i = 0; i < rooms.length; i++) {
+            AddGroup(rooms[i].RoomID, $('#hdId').val(), rooms[i].RoomName, $('#username').val());
         }
     }
     chat.client.onNewUserConnected = function (id, name) {
@@ -36,7 +43,15 @@
         $('#' + id).remove();
     }
 
-
+    chat.client.onCreating = function (rooms) {
+        $("#rooms").empty();
+        for (var i = 0; i < rooms.length; i++) {
+            AddGroup(rooms[i].RoomID, $('#hdId').val(), rooms[i].RoomName, $('#username').val());
+         }
+    }
+    chat.client.onNewGroupCreating = function (roomid, roomname) {
+        AddGroup(roomid, $('#userid').val(), roomname, $('#username').val());
+    }
     $(document).ready(function () {
         $('#txtUserName').keypress(function (event) {
 
@@ -85,18 +100,49 @@
             }
 
         });
+        $("#create").click(function () {
+            $("#create").hide();
+
+            $('<input/>').attr({ type: 'text', id: 'roomname' }).appendTo('#rooms');
+
+            var b = $('<button>',
+                {
+                    text: 'Create',
+                    id: 'createroom',
+                    click: function (roomname) {
+                        $("#create").show();
+                        roomname = $('#roomname').val();
+                        $("#roomname").remove();
+                        $("#createroom").remove();
+                        chat.server.create(roomname);
+                    }
+                })
+            $("#rooms").append(b);
+        }
+            );
+
+
     });
 });
 
 
 
-function AddUser(id, name) {
+function AddUser(id, userName) {
 
     var userId = $('#hdId').val();
 
     if (userId != id) {
-
-        $("#chatusers").append('<p id="' + id + '"><b>' + name + '</b></p>');
+        var name = userName;
+        if (userName.length > 17) {
+            var name = userName.substr(0, 17) + '...';
+        }
+        $("#chatusers").append('<p id="' + id + '"><b title="' + userName + '">' + name + '</b></p>');
     }
 }
 
+function AddGroup(roomid,userid,roomname,username)
+{
+    var hr = 'http://localhost:48088/Home/Room?id=' + roomid+ '&userid=' + userid + '&username=' + username + '&roomname=' + roomname;
+    $("#rooms").append('<p><a  href="' + hr + '" id="' + roomid + '">' + roomname + '</a></p>');
+
+}

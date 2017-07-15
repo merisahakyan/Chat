@@ -11,6 +11,7 @@
     {
         private static List<User> Users = new List<User>();
         private static List<Room> Rooms = new List<Room>();
+        bool flag = true;
 
         public void Send(string name, string message)
         {
@@ -32,12 +33,15 @@
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            User item = Users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            if (!ReferenceEquals(item, null))
+            if (flag)
             {
-                Users.Remove(item);
-                var id = Context.ConnectionId;
-                Clients.All.onUserDisconnected(id, item.Name);
+                User item = Users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+                if (!ReferenceEquals(item, null))
+                {
+                    Users.Remove(item);
+                    var id = Context.ConnectionId;
+                    Clients.All.onUserDisconnected(id, item.Name);
+                }
             }
             return base.OnDisconnected(stopCalled);
         }
@@ -45,16 +49,11 @@
         public void Create(string group)
         {
             var id = Context.ConnectionId;
-            var guid = new Guid();
+            var guid = Guid.NewGuid();
             Rooms.Add(new Room
             {
                 RoomID = guid,
-                RoomName = group,
-                Members = new List<User> {
-                    new User
-                    { ConnectionId=Context.ConnectionId,
-                    Name =Users.Where(p=>p.ConnectionId==Context.ConnectionId).First().Name}
-                }
+                RoomName = group
             });
             Clients.Caller.onCreating(Rooms);
             Clients.AllExcept(id).onNewGroupCreating(guid, group);
@@ -62,18 +61,19 @@
 
 
 
-        public void OnRoomConnect(string id, string username, string roomname)
+        public void JoinGroup( string roomname)
         {
-            Rooms.Where(p => p.RoomName == roomname).First().Members.Add(new User
-            {
-                ConnectionId = id,
-                Name = username
-            });
+            //flag = false;
+            //Rooms.Where(p => p.RoomName == roomname).First().Members.Add(new User
+            //{
+            //    ConnectionId = id,
+            //    Name = Users.Where(p => p.ConnectionId == id).First().Name
+            //});
 
-            Clients.Caller.onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
-            Clients.AllExcept(id).onNewRoomConnecting(id, username, Rooms.Where(p => p.RoomName == roomname).First().RoomID);
-
+           
+            Groups.Add(Context.ConnectionId, roomname);
+            Clients.Caller.onRoomConnected();
         }
-
+        
     }
 }

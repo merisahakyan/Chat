@@ -5,7 +5,7 @@
         
         $('#chatBody').show();
 
-        $('#hdId').val(id);
+        $('#userid').val(id);
         $('#username').val(userName);
         var name = $('#username').val();
         if ($('#username').val().length > 15)
@@ -25,16 +25,16 @@
         AddUserToRoom(id, username,roomid);
     }
 
-    $(document).ready(function () {
-        
-        chat.server.onroomconnect($("#userid").val(), $("#username").val(), $("#roomname").val());
+    $.connection.start().done(function () {
+        $(document).ready(function () {
+            chat.server.onroomconnection('','','');
+        });
     });
- 
 });
 
 function AddUser(id, userName) {
 
-    var userId = $('#hdId').val();
+    var userId = $('#userid').val();
 
     if (userId != id) {
         var name = userName;
@@ -47,7 +47,7 @@ function AddUser(id, userName) {
 function AddUserToRoom(id,username,roomid)
 {
     var rid = $("#roomid").val();
-    var uid = $('#hdId').val();
+    var uid = $('#userid').val();
     if(uid !=id && rid==roomid)
     {
         $("#members").append('<p id="' + id + '"><b title="' + username + '">' + username + '</b></p>');

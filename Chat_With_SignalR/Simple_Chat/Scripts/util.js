@@ -140,11 +140,11 @@
                     }
                 })
             $("#rooms").append(b);
-        }
-            );
+        });
 
         $("#test").click(function () {
-            chat.server.joingroup('m');
+           
+            chat.server.joinGroup('m');
         });
 
     });

@@ -2,7 +2,7 @@
     var chat = $.connection.chatHub;
     chat.client.onRoomConnected = function (id, userName, members) {
 
-        
+
         $('#chatBody').show();
 
         $('#userid').val(id);
@@ -11,14 +11,15 @@
         if ($('#username').val().length > 15)
             var name = userName.substr(0, 15) + '...';
 
-        $('#header').html('<h3  title="' + $('#username').val() + '">Welcome, ' + name + '</h3>');
+        $('#header').html('<h3  title="' +$('#username').val() + '">Welcome, ' +name + '</h3>');
 
 
         for (var i = 0; i < allUsers.length; i++) {
 
-            AddToRoom(members[i].ConnectionId, members[i].Name, $('#roomid').val());
+            AddUserToRoom(members[i].ConnectionId, members[i].Name, $('#roomid').val());
+
         }
-       
+
     }
     chat.client.onNewRoomConnecting=function(id,username,roomid)
     {
@@ -27,7 +28,7 @@
 
     $.connection.start().done(function () {
         $(document).ready(function () {
-            chat.server.onroomconnection('','','');
+            chat.server.joinGroup('m');
         });
     });
 });

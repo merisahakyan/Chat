@@ -8,6 +8,10 @@ namespace Simple_Chat.Controllers
         {
             return View();
         }
+        public ActionResult Login()
+        {
+            return View();
+        }
         public ActionResult Room(string id,string userid,string username,string roomname)
         {
             ViewData["roomid"] = id;

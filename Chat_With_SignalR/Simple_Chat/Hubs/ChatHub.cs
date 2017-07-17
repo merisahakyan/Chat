@@ -34,6 +34,7 @@
             }
             if (condition == "join")
             {
+                JoinGroup(username, roomname);
                 Users.Where(p => p.Name == username).First().ConnectionId = id;
                 Clients.Client(id).onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
                 Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
@@ -79,8 +80,8 @@
             base.OnDisconnected(true);
             if (condition == "join")
             {
-
-                JoinGroup(uname, p);
+                ChatHub.condition = condition;
+                //JoinGroup(uname, p);
             }
             else
             {

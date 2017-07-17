@@ -23,8 +23,9 @@
         public void Starting(string username, string roomname)
         {
             var id = Context.ConnectionId;
-            username = uname;
-            if (Users.Where(p => p.Name == uname).Count() == 1 && uname != null && login)
+            //username = uname;
+            // uname = username;
+            if (Users.Where(p => p.Name == username).Count() == 1 && uname != null && login)
             {
                 Users.Where(p => p.Name == uname).First().ConnectionId = id;
                 Clients.Client(id).onConnected(id, username, Users, Rooms);
@@ -33,7 +34,7 @@
             }
             if (condition == "join")
             {
-                Users.Where(p => p.Name == uname).First().ConnectionId = id;
+                Users.Where(p => p.Name == username).First().ConnectionId = id;
                 Clients.Client(id).onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
                 Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
 
@@ -78,8 +79,8 @@
             base.OnDisconnected(true);
             if (condition == "join")
             {
-               
-                    JoinGroup(uname, p);
+
+                JoinGroup(uname, p);
             }
             else
             {
@@ -105,7 +106,7 @@
             });
             Clients.Caller.onCreating(Rooms);
             Clients.AllExcept(id).onNewGroupCreating(guid, group);
-            
+
         }
 
 

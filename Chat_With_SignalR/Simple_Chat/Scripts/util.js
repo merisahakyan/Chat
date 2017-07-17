@@ -17,7 +17,7 @@
         //localStorage["userid"] = id;
         //localStorage["username"] = userName;
         //localStorage["users"] = allUsers;
-
+        $("username").val(userName);
         var name = userName;
         if (userName.length > 15)
             var name = userName.substr(0, 15) + '...';
@@ -81,7 +81,7 @@
 
     $.connection.hub.start().done(function () {
         $("#joindiv").hide();
-        chat.server.starting($("#username").val(), sessionStorage["roomname"]);
+        chat.server.starting(sessionStorage["username"] , sessionStorage["roomname"]);
 
         $('#sendmessage').click(function () {
             if ($('#message').val() != '') {
@@ -126,14 +126,15 @@
             $('#txtUserName').keypress(function (event) {
 
                 if (event.which == 13) {
-                    localStorage["username"] = $("#txtUserName").val();
+                    sessionStorage["username"] = $("#txtUserName").val();
+
                     var name = $("#txtUserName").val();
                     if (name.length > 0) {
                         window.location.href = 'http://localhost:48088/Home/Index';
                         //chat.server.disconnect();
                         //$.connection.hub.start();
                         chat.server.connect(chat.ConnectionId, name);
-
+                        
                     }
                     else {
                         alert("Enter name..!!");
@@ -143,14 +144,14 @@
         });
         $("#btnLogin").click(function () {
 
-
+            sessionStorage["username"] = $("#txtUserName").val();
             var name = $("#txtUserName").val();
             if (name.length > 0) {
                 window.location.href = 'http://localhost:48088/Home/Index';
                 //chat.server.disconnect();
                 //$.connection.hub.start();
                 chat.server.connect(chat.ConnectionId, name);
-
+                
             }
             else {
                 alert("Enter name..!!");
@@ -158,7 +159,7 @@
 
         });
         $("#join").click(function () {
-            window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"];
+            window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"]+'&username='+$("username").val();
             chat.server.disconnect('join', sessionStorage["roomname"]);
         });
         $("#sendgroupmessage").click(function () {

@@ -12,10 +12,10 @@ namespace Simple_Chat.Controllers
         {
             return View();
         }
-        public ActionResult Room(string roomname)
+        public ActionResult Room(string roomname,string username)
         {
             ViewData["roomname"] = roomname;
-            
+            ViewData["username"] = username;
             return View();
         }
     }

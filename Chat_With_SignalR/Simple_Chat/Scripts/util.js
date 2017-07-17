@@ -30,7 +30,7 @@
             AddUser(allUsers[i].ConnectionId, allUsers[i].Name);
         }
         for (var i = 0; i < rooms.length; i++) {
-            AddGroup(rooms[i].RoomID, id, rooms[i].RoomName, userName);
+            AddGroup(rooms[i].RoomID, rooms[i].RoomName);
 
         }
     }
@@ -38,7 +38,7 @@
 
         AddUser(id, name);
         for (var i = 0; i < rooms.length; i++) {
-            AddGroup(rooms[i].RoomID, id, rooms[i].RoomName, userName);
+            AddGroup(rooms[i].RoomID, rooms[i].RoomName);
         }
     }
     chat.client.onUserDisconnected = function (id, userName) {
@@ -48,14 +48,14 @@
     }
 
     chat.client.onCreating = function (rooms) {
-        $("#rooms").empty();
+
         for (var i = 0; i < rooms.length; i++) {
-            AddGroup(rooms[i].RoomID, $('#userid').val(), rooms[i].RoomName, $('#username').val());
+            AddGroup(rooms[i].RoomID, rooms[i].RoomName);
 
         }
     }
     chat.client.onNewGroupCreating = function (roomid, roomname) {
-        AddGroup(roomid, $('#userid').val(), roomname, $('#username').val());
+        AddGroup(roomid, roomname);
 
     }
     chat.client.onRoomConnected = function (id, userName, members) {
@@ -63,21 +63,16 @@
 
         $('#chatBody').show();
 
-        $('#userid').val(id);
-        $('#username').val(userName);
-        var name = $('#username').val();
-        if ($('#username').val().length > 15)
-            var name = userName.substr(0, 15) + '...';
+        for (var i = 0; i < members.length; i++) {
 
-        $('#header').html('<h3  title="' + $('#username').val() + '">Welcome, ' + name + '</h3>');
-
-
-        for (var i = 0; i < allUsers.length; i++) {
-
-            AddUserToRoom(members[i].ConnectionId, members[i].Name, $('#roomid').val());
+            AddUserToRoom(members[i].ConnectionId, members[i].Name);
 
         }
 
+    }
+    chat.client.onNewRoomConnect = function (id, username, roomname) {
+        if (roomname == sessionStorage["roomname"])
+            AddUserToRoom(id, username);
     }
 
     $.connection.hub.disconnected(function () {
@@ -85,7 +80,8 @@
     });
 
     $.connection.hub.start().done(function () {
-        chat.server.starting();
+        $("#joindiv").hide();
+        chat.server.starting($("#username").val(), sessionStorage["roomname"]);
 
         $('#sendmessage').click(function () {
             if ($('#message').val() != '') {
@@ -134,8 +130,9 @@
                     var name = $("#txtUserName").val();
                     if (name.length > 0) {
                         window.location.href = 'http://localhost:48088/Home/Index';
-                        chat.server.disconnect();
-                        chat.server.connect(name);
+                        //chat.server.disconnect();
+                        //$.connection.hub.start();
+                        chat.server.connect(chat.ConnectionId, name);
 
                     }
                     else {
@@ -146,12 +143,13 @@
         });
         $("#btnLogin").click(function () {
 
-            localStorage["username"] = $("#txtUserName").val();
+
             var name = $("#txtUserName").val();
             if (name.length > 0) {
                 window.location.href = 'http://localhost:48088/Home/Index';
-                chat.server.disconnect();
-                chat.server.connect(name);
+                //chat.server.disconnect();
+                //$.connection.hub.start();
+                chat.server.connect(chat.ConnectionId, name);
 
             }
             else {
@@ -159,6 +157,13 @@
             }
 
         });
+        $("#join").click(function () {
+            window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"];
+            chat.server.disconnect('join', sessionStorage["roomname"]);
+        });
+        $("#sendgroupmessage").click(function () {
+            chat.server.SendToGroup(username, $("message").val(), $("roomname").val())
+        })
 
     });
 });
@@ -178,25 +183,18 @@ function AddUser(id, userName) {
     }
 }
 
-function AddGroup(roomid, userid, roomname, username) {
-    var hr = 'http://localhost:48088/Home/Room?id=' + roomid + '&userid=' + userid + '&username=' + username + '&roomname=' + roomname;
-    //$("#rooms").append('<p id="' + roomname + '"><a  href="' + hr + '" >' + roomname + '</a></p>');
+function AddGroup(roomid, roomname) {
+
     $("#rooms").append('<p id="' + roomname + '">' + roomname + '</p>');
+    //$("#rooms").append('<p id="' + roomname + '">' + roomname + '</p>');
+    $("#" + roomname).click(function () {
+        $("#joindiv").show();
+        sessionStorage["roomname"] = roomname;
+    })
 
 }
-function AddUserToRoom(id, username, roomid) {
-    var rid = $("#roomid").val();
-    var uid = $('#userid').val();
-    if (uid != id && rid == roomid) {
-        $("#members").append('<p id="' + id + '"><b title="' + username + '">' + username + '</b></p>');
-    }
-}
-function getSessionId() {
-    var sessionId = window.sessionStorage.sessionId;
+function AddUserToRoom(id, username) {
 
-    if (!sessionId) {
-        sessionId = window.sessionStorage.sessionId = Date.now();
-    }
+    $("#members").append('<p id="' + id + '"><b title="' + username + '">' + username + '</b></p>');
 
-    return sessionId;
 }

@@ -5,10 +5,20 @@
     var chat = $.connection.chatHub;
 
     chat.client.addMessage = function (name, message) {
+        if (sessionStorage["roomname"] == 'general') {
+            $('#chatroom').append('<p><b>' + name
+                + '</b>: ' + message + '</p>');
+            $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+        }
+    };
 
-        $('#chatroom').append('<p><b>' + name
-            + '</b>: ' + message + '</p>');
-        $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+    chat.client.addMessageToRoom = function (name, message, roomname) {
+
+        if (roomname == sessionStorage["roomname"]) {
+            $('#chatroom').append('<p><b>' + name
+               + '</b>: ' + message + '</p>');
+            $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+        }
 
     };
 
@@ -18,6 +28,7 @@
         //localStorage["username"] = userName;
         //localStorage["users"] = allUsers;
         $("username").val(userName);
+
         var name = userName;
         if (userName.length > 15)
             var name = userName.substr(0, 15) + '...';
@@ -47,13 +58,7 @@
         $('#' + userName).remove();
     }
 
-    chat.client.onCreating = function (rooms) {
 
-        for (var i = 0; i < rooms.length; i++) {
-            AddGroup(rooms[i].RoomID, rooms[i].RoomName);
-
-        }
-    }
     chat.client.onNewGroupCreating = function (roomid, roomname) {
         AddGroup(roomid, roomname);
 
@@ -75,13 +80,29 @@
             AddUserToRoom(id, username);
     }
 
-    $.connection.hub.disconnected(function () {
-        $.connection.hub.start();
-    });
+    chat.client.onRoomOut = function (username, roomname) {
+        if (roomname == sessionStorage["roomname"])
+            $('#' + username).remove();
+    }
+    chat.client.outFromRoom = function (username) {
+        if (sessionStorage["username"] == username) {
+            window.location.href = 'http://localhost:48088//Home/Index';
+            sessionStorage["username"] = username;
+            sessionStorage["roomname"] = 'general';
+        }
+    }
+    
+    //$.connection.hub.disconnected(function () {
+        
 
+    //    $.connection.hub.start();
+    //});
+
+    
     $.connection.hub.start().done(function () {
         $("#joindiv").hide();
-        chat.server.starting(sessionStorage["username"] , sessionStorage["roomname"]);
+        $("activate").hide();
+        chat.server.starting(sessionStorage["username"], sessionStorage["roomname"]);
 
         $('#sendmessage').click(function () {
             if ($('#message').val() != '') {
@@ -103,7 +124,7 @@
 
         $("#create").click(function () {
             $("#create").hide();
-
+            
             $('<input/>').attr({ type: 'text', id: 'roomname' }).appendTo('#rooms');
 
             var b = $('<button>',
@@ -127,14 +148,14 @@
 
                 if (event.which == 13) {
                     sessionStorage["username"] = $("#txtUserName").val();
-
+                    sessionStorage["roomname"] = 'general';
                     var name = $("#txtUserName").val();
                     if (name.length > 0) {
                         window.location.href = 'http://localhost:48088/Home/Index';
                         //chat.server.disconnect();
                         //$.connection.hub.start();
                         chat.server.connect(chat.ConnectionId, name);
-                        
+
                     }
                     else {
                         alert("Enter name..!!");
@@ -145,13 +166,14 @@
         $("#btnLogin").click(function () {
 
             sessionStorage["username"] = $("#txtUserName").val();
+            sessionStorage["roomname"] = 'general';
             var name = $("#txtUserName").val();
             if (name.length > 0) {
                 window.location.href = 'http://localhost:48088/Home/Index';
                 //chat.server.disconnect();
                 //$.connection.hub.start();
                 chat.server.connect(chat.ConnectionId, name);
-                
+
             }
             else {
                 alert("Enter name..!!");
@@ -159,12 +181,33 @@
 
         });
         $("#join").click(function () {
-            window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"]+'&username='+$("username").val();
+            window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"] + '&username=' + $("username").val();
             chat.server.disconnect('join', sessionStorage["roomname"]);
         });
         $("#sendgroupmessage").click(function () {
-            chat.server.SendToGroup(username, $("message").val(), $("roomname").val())
+            if ($("#groupmessage").val() != '') {
+                chat.server.sendToGroup(sessionStorage["username"], $("#groupmessage").val(), sessionStorage["roomname"]);
+                $("#groupmessage").val('');
+            }
         })
+        $('#groupmessage').keypress(function (event) {
+
+            if (event.which == 13) {
+                if ($("#groupmessage").val() != '') {
+                    chat.server.sendToGroup(sessionStorage["username"], $("#groupmessage").val(), sessionStorage["roomname"]);
+                    $("#groupmessage").val('');
+                }
+            }
+        });
+        $("#out").click(function () {
+            chat.server.outFromRoom(sessionStorage["username"], sessionStorage["roomname"]);
+        });
+        $("#register").click(function () {
+            alert('lll');
+            $("#activate").show();
+            $("#register").enabled();
+        })
+        
 
     });
 });
@@ -196,6 +239,6 @@ function AddGroup(roomid, roomname) {
 }
 function AddUserToRoom(id, username) {
 
-    $("#members").append('<p id="' + id + '"><b title="' + username + '">' + username + '</b></p>');
+    $("#members").append('<p id="' + username + '"><b title="' + username + '">' + username + '</b></p>');
 
 }

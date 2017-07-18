@@ -14,7 +14,7 @@
         <div id="chatBody">
             <div id="main_div">
                 <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:400px; overflow:auto">
-                    <div id="joindiv" >
+                    <div id="joindiv" style="text-align:center">
                         <input type="button" value="Join" id="join"  />
                         <input type="hidden" id="joinroom"/>
                     </div>
@@ -25,7 +25,7 @@
                     <input type="button" id="sendmessage" value="send" style="position:absolute; width:100px;height:40px;left:950px;top:460px" />
                 </div>
             </div>
-            <div style="background-color:antiquewhite; position:absolute;width:250px;height:500px; left:0px;top:0px">
+            <div style="background-color:antiquewhite; position:absolute;width:250px;height:500px; left:0px;top:0px; overflow:auto">
                 <div id="chatusers">
                     <div id="header"></div>
                     <p style="color:red"><b>Active Users...</b></p>
@@ -33,10 +33,11 @@
                 </div>
                 <div id="allrooms">
                     <p style="color:red"><b>Rooms</b></p>
+                    <input type="button" style="width:250px" id="create" value="Create Room" />
                     <div id="rooms" style="overflow:auto">
                         
                     </div>
-                    <input type="button" style="width:250px" id="create" value="Create Room" />
+                    
                     
                 </div>
             </div>

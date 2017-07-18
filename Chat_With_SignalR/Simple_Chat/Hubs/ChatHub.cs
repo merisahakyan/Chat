@@ -18,13 +18,11 @@
         static string uname;
         static bool login = false;
         static string condition;
-
+        ChatDataContext _context = new ChatDataContext();
 
         public void Starting(string username, string roomname)
         {
             var id = Context.ConnectionId;
-            //username = uname;
-            // uname = username;
             if (Users.Where(p => p.Name == username).Count() == 1 && uname != null && login)
             {
                 Users.Where(p => p.Name == uname).First().ConnectionId = id;
@@ -32,14 +30,24 @@
                 Clients.AllExcept(id).onNewUserConnected(id, username);
                 login = false;
             }
+            else if (Users.Where(p => p.Name == username).Count() == 1 && roomname == "general")
+            {
+                Users.Where(p => p.Name == uname).First().ConnectionId = id;
+                Clients.Client(id).onConnected(id, username, Users, Rooms);
+            }
             if (condition == "join")
             {
                 JoinGroup(username, roomname);
                 Users.Where(p => p.Name == username).First().ConnectionId = id;
                 Clients.Client(id).onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
                 Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
-
                 condition = "";
+            }
+            else if (Rooms.Where(p => p.Members.Where(o => o.Name == username).Count() > 0).Count() > 0)
+            {
+
+                Users.Where(p => p.Name == username).First().ConnectionId = id;
+                Clients.Client(id).onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
             }
         }
         public void Send(string name, string message)
@@ -56,7 +64,6 @@
             if (Users.All(x => x.ConnectionId != id))
             {
                 Users.Add(new User() { ConnectionId = id, Name = username });
-
             }
         }
 
@@ -81,17 +88,10 @@
             if (condition == "join")
             {
                 ChatHub.condition = condition;
-                //JoinGroup(uname, p);
             }
             else
             {
-                //User item = Users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-                //if (!ReferenceEquals(item, null))
-                //{
-                //    Users.Remove(item);
-                //    var id = Context.ConnectionId;
-                //    Clients.All.onUserDisconnected(id, item.Name);
-                //}
+
             }
         }
 
@@ -105,8 +105,8 @@
                 RoomName = group,
                 Members = new List<User>()
             });
-            Clients.Caller.onCreating(Rooms);
-            Clients.AllExcept(id).onNewGroupCreating(guid, group);
+
+            Clients.All.onNewGroupCreating(guid, group);
 
         }
 
@@ -114,16 +114,6 @@
 
         public void JoinGroup(string username, string roomname)
         {
-
-            //flag = false;
-            //Rooms.Where(p => p.RoomName == roomname).First().Members.Add(new User
-            //{
-            //    ConnectionId = id,
-            //    Name = Users.Where(p => p.ConnectionId == id).First().Name
-            //});
-
-
-            //Groups.Add(Context.ConnectionId, roomname);
             Rooms.Where(p => p.RoomName == roomname).First().Members.Add(new User
             {
                 Name = username,
@@ -132,7 +122,32 @@
             condition = "join";
 
         }
+        public void OutFromRoom(string username, string roomname)
+        {
+            int index = -1;
+            for (int i = 0; i < Rooms.Where(p => p.RoomName == roomname).First().Members.Count(); i++)
+            {
+                if (Rooms.Where(p => p.RoomName == roomname).First().Members[i].Name == username)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < Rooms.Count(); i++)
+            {
+                if (Rooms[i].RoomName == roomname)
+                {
+                    Rooms[i].Members.RemoveRange(index, 1);
+                    break;
+                }
+            }
+            Clients.All.outFromRoom(username);
+            Clients.All.onRoomOut(username, roomname);
+        }
 
-
+        public void SendToGroup(string username, string message, string roomname)
+        {
+            Clients.All.addMessageToRoom(username, message, roomname);
+        }
     }
 }

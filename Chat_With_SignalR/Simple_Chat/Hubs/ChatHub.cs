@@ -147,6 +147,15 @@
             });
             _context.SaveChanges();
             Clients.All.addMessageToRoom(username, message, roomname);
+            var usersfornotify = _context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users;
+
+            List<string> notify = new List<string>();
+            foreach(var m in usersfornotify)
+            {
+                if (ActiveUsers.Contains(new User(m)) && m.UserName!=username)
+                    notify.Add(ActiveUsers.FirstOrDefault(p => p.Name == (new User(m)).Name).ConnectionId);
+            }
+            Clients.Clients(notify).desktopNot(roomname,username,message);
         }
 
         public void Connect(string username, string password)
@@ -182,10 +191,6 @@
             if (condition == "join")
             {
                 ChatHub.condition = condition;
-            }
-            else
-            {
-
             }
         }
 

@@ -1,6 +1,8 @@
-﻿namespace Simple_Chat.Models
+﻿using System;
+
+namespace Simple_Chat.Models
 {
-    public class User
+    public class User : IEquatable<User>
     {
         public User()
         {
@@ -20,5 +22,11 @@
         public string eMail { get; set; }
         public string token { get; set; }
         public bool active { get; set; }
+
+        public bool Equals(User other)
+        {
+            if (other == null) return false;
+            return (this.Name == other.Name);
+        }
     }
 }

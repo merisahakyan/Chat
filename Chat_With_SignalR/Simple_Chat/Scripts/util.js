@@ -1,4 +1,77 @@
 ﻿$(function () {
+    $.fn.easyNotify = function (options) {
+
+        var settings = $.extend({
+            title: "Notification",
+            options: {
+                body: "message",
+                icon: "",
+                lang: 'pt-BR',
+                onClose: "",
+                onClick: "",
+                onError: ""
+            }
+        }, options);
+
+        this.init = function () {
+            var notify = this;
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+
+                var notification = new Notification(settings.title, settings.options);
+
+                notification.onclose = function () {
+                    if (typeof settings.options.onClose == 'function') {
+                        settings.options.onClose();
+                    }
+                };
+
+                notification.onclick = function () {
+                    if (typeof settings.options.onClick == 'function') {
+                        settings.options.onClick();
+                    }
+                };
+
+                notification.onerror = function () {
+                    if (typeof settings.options.onError == 'function') {
+                        settings.options.onError();
+                    }
+                };
+
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission(function (permission) {
+                    if (permission === "granted") {
+                        notify.init();
+                    }
+
+                });
+            }
+
+        };
+
+        this.init();
+        return this;
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -9,8 +82,30 @@
             $('#chatroom').append('<p><b>' + name
                 + '</b>: ' + message + '</p>');
             $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+
+            if(name!=sessionStorage["username"])
+            {
+                var options = {
+                    title: sessionStorage["roomname"],
+                    options: {
+                        body: name + ': ' + message,
+                        lang: 'en-US',
+                    }
+                };
+                $("#easyNotify").easyNotify(options);
+            }
         }
     };
+    chat.client.desktopNot = function (roomname, name, message) {
+        var options = {
+            title: sessionStorage["roomname"],
+            options: {
+                body: name + ': ' + message,
+                lang: 'en-US',
+            }
+        };
+        $("#easyNotify").easyNotify(options);
+    }
     chat.client.showAllMessages = function (roomname, messages) {
 
         for (var i = 0; i < messages.length; i++)
@@ -29,10 +124,6 @@
     };
 
     chat.client.onConnected = function (id, userName, allUsers, joinedrooms, rooms) {
-
-        //localStorage["userid"] = id;
-        //localStorage["username"] = userName;
-        //localStorage["users"] = allUsers;
         $("username").val(userName);
 
         var name = userName;
@@ -129,7 +220,6 @@
     //    $.connection.hub.start();
     //});
 
-
     $.connection.hub.start().done(function () {
         $("#joindiv").hide();
         $("#activate").hide();
@@ -217,7 +307,7 @@
             if ($("#r_username").val() != '' && $("#r_password").val() != '' && $("#r_email").val() != ''
                 && $("#r_username").val().length < 20)
                 chat.server.submitRegistration($("#r_username").val(), $("#r_password").val(), $("#r_email").val());
-            else if ($("#r_username").val().length>20) {
+            else if ($("#r_username").val().length > 20) {
                 $("#namevalidation").show();
             }
             else {
@@ -253,7 +343,6 @@
 
         });
 
-
     });
 });
 
@@ -277,7 +366,7 @@ function AddGroup(roomname) {
     var name = roomname;
     if (name.length > 17)
         name = roomname.substr(0, 17) + '...';
-    $("#rooms").append('<p id="' + roomname + '" title="'+roomname+'">' + name + '</p>');
+    $("#rooms").append('<p id="' + roomname + '" title="' + roomname + '">' + name + '</p>');
     $("#" + roomname).click(function () {
         $("#joindiv").show();
         sessionStorage["roomname"] = roomname;
@@ -289,7 +378,7 @@ function AddJoinedGroup(roomname) {
     var name = roomname;
     if (name.length > 17)
         name = roomname.substr(0, 17) + '...';
-    $("#joinedrooms").append('<p id="' + roomname + '" title="'+roomname+'">' + name + '</p>');
+    $("#joinedrooms").append('<p id="' + roomname + '" title="' + roomname + '">' + name + '</p>');
     $("#" + roomname).click(function () {
         $("#joindiv").show();
         sessionStorage["roomname"] = roomname;
@@ -303,4 +392,14 @@ function AddUserToRoom(id, username) {
         name = username.substr(0, 17) + '...';
     $("#members").append('<p id="' + username + '"><b title="' + username + '">' + name + '</b></p>');
 
+}
+function not(roomname, username, message) {
+    var options = {
+        title: roomname,
+        options: {
+            body: username + ': ' + message,
+            lang: 'en-US',
+        }
+    };
+    $("#easyNotify").easyNotify(options);
 }

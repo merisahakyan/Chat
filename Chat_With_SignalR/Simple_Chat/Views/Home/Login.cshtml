@@ -4,28 +4,32 @@
 }
 <html>
 <body>
-    
+
 
     <div id="loginBlock">
         <h2>Login</h2>
+        <p id="loginvalidation" style="color:red">Login Failed!</p>
         Username:<br />
         <input id="txtUserName" type="text" /><br />
         Password:<br />
-        <input id="password" type="password"  /><br />
+        <input id="password" type="password" /><br />
         <input id="btnLogin" type="button" value="Sing In" />
     </div>
     <hr />
-    <div id="registerBlock">
+    <div id="registrationform">
         <h2>or Register</h2>
+        <p id="entervalidation" style="color:red">Enter all properties!</p>
+        <p id="namevalidation" style="color:red">Username must contains less than 20 characters!</p>
         Username:<br />
         <input id="r_username" type="text" /><br />
         Password:<br />
         <input id="r_password" type="password" /><br />
         eMail:<br />
-        <input id="r_email" type="text" /><br />
-        <input id="register" type="button" value="Submit" /><br />
-        <a href="https://mail.google.com" style="visibility:hidden" id="activate">Activate yout account!</a>
+        <input id="r_email" type="email" /><br />
+        <input type="button" id="submitregistration"  value="Register" /><br />
+
     </div>
+    <h4 id="activate">Activate your account!</h4>
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2-preview1.min.js"></script>
     <script src="~/signalr/hubs"></script>

@@ -11,6 +11,12 @@
             $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
         }
     };
+    chat.client.showAllMessages = function (roomname, messages) {
+
+        for (var i = 0; i < messages.length; i++)
+            $('#chatroom').append('<p><b>' + messages[i].Sender
+                + '</b>: ' + messages[i].Text + '</p>');
+    }
 
     chat.client.addMessageToRoom = function (name, message, roomname) {
 
@@ -22,7 +28,7 @@
 
     };
 
-    chat.client.onConnected = function (id, userName, allUsers, rooms) {
+    chat.client.onConnected = function (id, userName, allUsers, joinedrooms, rooms) {
 
         //localStorage["userid"] = id;
         //localStorage["username"] = userName;
@@ -41,16 +47,17 @@
             AddUser(allUsers[i].ConnectionId, allUsers[i].Name);
         }
         for (var i = 0; i < rooms.length; i++) {
-            AddGroup(rooms[i].RoomID, rooms[i].RoomName);
+            AddGroup(rooms[i].RoomName);
+
+        }
+        for (var i = 0; i < joinedrooms.length; i++) {
+            AddJoinedGroup(joinedrooms[i].RoomName);
 
         }
     }
-    chat.client.onNewUserConnected = function (id, name, rooms) {
-
+    chat.client.onNewUserConnected = function (id, name) {
+        $("#" + name).remove();
         AddUser(id, name);
-        for (var i = 0; i < rooms.length; i++) {
-            AddGroup(rooms[i].RoomID, rooms[i].RoomName);
-        }
     }
     chat.client.onUserDisconnected = function (id, userName) {
 
@@ -59,8 +66,9 @@
     }
 
 
-    chat.client.onNewGroupCreating = function (roomid, roomname) {
-        AddGroup(roomid, roomname);
+    chat.client.onNewGroupCreating = function (roomname) {
+        $("#roomvalidation").hide();
+        AddGroup(roomname);
 
     }
     chat.client.onRoomConnected = function (id, userName, members) {
@@ -91,22 +99,50 @@
             sessionStorage["roomname"] = 'general';
         }
     }
-    
+    chat.client.toGeneral = function (username) {
+        window.location.href = 'http://localhost:48088//Home/Index';
+        sessionStorage["username"] = username;
+        sessionStorage["roomname"] = 'general';
+    }
+    chat.client.onRegistration = function (t) {
+        if (t) {
+            $("#registrationform").hide();
+            $("#activate").show();
+        }
+        else {
+            alert('The username already exists!')
+        }
+    }
+    chat.client.onLoginFail = function () {
+        $("#loginvalidation").show();
+    }
+    chat.client.onLogin = function () {
+        window.location.href = 'http://localhost:48088/Home/Index';
+    }
+    chat.client.failedRoomCreating = function () {
+        $("#roomvalidation").show();
+
+    }
     //$.connection.hub.disconnected(function () {
-        
+
 
     //    $.connection.hub.start();
     //});
 
-    
+
     $.connection.hub.start().done(function () {
         $("#joindiv").hide();
-        $("activate").hide();
+        $("#activate").hide();
+        $("#validation").hide();
+        $("#loginvalidation").hide();
+        $("#roomvalidation").hide();
+        $("#namevalidation").hide();
+        $("#entervalidation").hide();
         chat.server.starting(sessionStorage["username"], sessionStorage["roomname"]);
 
         $('#sendmessage').click(function () {
             if ($('#message').val() != '') {
-                chat.server.send($('#username').val(), $('#message').val());
+                chat.server.send(sessionStorage["username"], $('#message').val());
                 $('#message').val('');
             }
         });
@@ -115,7 +151,7 @@
             $('#message').keypress(function (event) {
 
                 if (event.which == 13 && $('#message').val() != '') {
-                    chat.server.send($('#username').val(), $('#message').val());
+                    chat.server.send(sessionStorage["username"], $('#message').val());
                     $('#message').val('');
                 }
             });
@@ -124,8 +160,8 @@
 
         $("#create").click(function () {
             $("#create").hide();
-            
-            $('<input/>').attr({ type: 'text', id: 'roomname' }).appendTo('#rooms');
+
+            $('<input/>').attr({ type: 'text', id: 'roomname' }).appendTo('#creatingdiv');
 
             var b = $('<button>',
                 {
@@ -140,7 +176,7 @@
 
                     }
                 })
-            $("#rooms").append(b);
+            $("#creatingdiv").append(b);
         });
 
         $(document).ready(function () {
@@ -151,12 +187,11 @@
                     sessionStorage["roomname"] = 'general';
                     var name = $("#txtUserName").val();
                     if (name.length > 0) {
-                        window.location.href = 'http://localhost:48088/Home/Index';
-                        //chat.server.disconnect();
-                        //$.connection.hub.start();
-                        chat.server.connect(chat.ConnectionId, name);
+
+                        chat.server.connect(name, $("#password").val());
 
                     }
+
                     else {
                         alert("Enter name..!!");
                     }
@@ -169,16 +204,26 @@
             sessionStorage["roomname"] = 'general';
             var name = $("#txtUserName").val();
             if (name.length > 0) {
-                window.location.href = 'http://localhost:48088/Home/Index';
-                //chat.server.disconnect();
-                //$.connection.hub.start();
-                chat.server.connect(chat.ConnectionId, name);
+
+                chat.server.connect(name, $("#password").val());
 
             }
             else {
                 alert("Enter name..!!");
             }
 
+        });
+        $("#submitregistration").click(function () {
+            if ($("#r_username").val() != '' && $("#r_password").val() != '' && $("#r_email").val() != ''
+                && $("#r_username").val().length < 20)
+                chat.server.submitRegistration($("#r_username").val(), $("#r_password").val(), $("#r_email").val());
+            else if ($("#r_username").val().length>20) {
+                $("#namevalidation").show();
+            }
+            else {
+                $("#entervalidation").show();
+
+            }
         });
         $("#join").click(function () {
             window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"] + '&username=' + $("username").val();
@@ -201,13 +246,13 @@
         });
         $("#out").click(function () {
             chat.server.outFromRoom(sessionStorage["username"], sessionStorage["roomname"]);
+
         });
-        $("#register").click(function () {
-            alert('lll');
-            $("#activate").show();
-            $("#register").enabled();
-        })
-        
+        $("#toGeneral").click(function () {
+            chat.server.toGeneral(sessionStorage["username"], sessionStorage["roomname"]);
+
+        });
+
 
     });
 });
@@ -227,10 +272,24 @@ function AddUser(id, userName) {
     }
 }
 
-function AddGroup(roomid, roomname) {
+function AddGroup(roomname) {
 
-    $("#rooms").append('<p id="' + roomname + '">' + roomname + '</p>');
-    //$("#rooms").append('<p id="' + roomname + '">' + roomname + '</p>');
+    var name = roomname;
+    if (name.length > 17)
+        name = roomname.substr(0, 17) + '...';
+    $("#rooms").append('<p id="' + roomname + '" title="'+roomname+'">' + name + '</p>');
+    $("#" + roomname).click(function () {
+        $("#joindiv").show();
+        sessionStorage["roomname"] = roomname;
+    })
+
+}
+function AddJoinedGroup(roomname) {
+
+    var name = roomname;
+    if (name.length > 17)
+        name = roomname.substr(0, 17) + '...';
+    $("#joinedrooms").append('<p id="' + roomname + '" title="'+roomname+'">' + name + '</p>');
     $("#" + roomname).click(function () {
         $("#joindiv").show();
         sessionStorage["roomname"] = roomname;
@@ -239,6 +298,9 @@ function AddGroup(roomid, roomname) {
 }
 function AddUserToRoom(id, username) {
 
-    $("#members").append('<p id="' + username + '"><b title="' + username + '">' + username + '</b></p>');
+    var name = username;
+    if (name.length > 17)
+        name = username.substr(0, 17) + '...';
+    $("#members").append('<p id="' + username + '"><b title="' + username + '">' + name + '</b></p>');
 
 }

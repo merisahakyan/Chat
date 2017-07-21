@@ -9,77 +9,171 @@
     using System.Web.SessionState;
     using System.Web;
     using System.Collections.Concurrent;
-
+    using Providers;
+    using System.Data.Entity;
+    using AutoMapper;
 
     public class ChatHub : Hub
     {
-        private static List<User> Users = new List<User>();
-        private static List<Room> Rooms = new List<Room>();
+        private static List<User> ActiveUsers = new List<User>();
         static string uname;
         static bool login = false;
-        static string condition;
+        static string condition = "";
         ChatDataContext _context = new ChatDataContext();
 
         public void Starting(string username, string roomname)
         {
             var id = Context.ConnectionId;
-            if (Users.Where(p => p.Name == username).Count() == 1 && uname != null && login)
+            Simple_Chat.User user = null;
+
+            if (!ReferenceEquals(username, null))
+                user = _context.Users.Where(p => p.UserName == username).First();
+            if (ActiveUsers.Where(p => p.Name == username).Count() == 1 && uname != null && !ReferenceEquals(user, null) && condition == "")
             {
-                Users.Where(p => p.Name == uname).First().ConnectionId = id;
-                Clients.Client(id).onConnected(id, username, Users, Rooms);
-                Clients.AllExcept(id).onNewUserConnected(id, username);
-                login = false;
+                if (user.active)
+                {
+                    ActiveUsers.Where(p => p.Name == uname).First().ConnectionId = id;
+
+                    var jrooms = user.Rooms;
+                    List<Room> jr = new List<Room>();
+                    foreach (var m in jrooms)
+                    {
+                        Room r = new Room(m);
+                        jr.Add(r);
+                    }
+                    var rooms = _context.Rooms;
+                    List<Room> nr = new List<Room>();
+                    foreach (var m in rooms)
+                    {
+                        if (m.RoomName == "general")
+                            continue;
+                        Room r = new Room(m);
+                        if (!jr.Contains(r))
+                            nr.Add(r);
+                    }
+
+                    Clients.Client(id).onConnected(id, username, ActiveUsers, jr, nr);
+                    if (login)
+                    {
+                        Clients.AllExcept(id).onNewUserConnected(id, username, roomname);
+                        login = false;
+                    }
+
+                    var messages = _context.Messages.Where(p => p.Room.RoomName == "general");
+                    List<Message> nm = new List<Message>();
+                    foreach (var m in messages)
+                    {
+                        Message n = new Message(m);
+                        nm.Add(n);
+                    }
+                    Clients.Client(id).showAllMessages("general", nm);
+
+                }
+
             }
-            else if (Users.Where(p => p.Name == username).Count() == 1 && roomname == "general")
+            else if (!ReferenceEquals(user, null) && username != null)
             {
-                Users.Where(p => p.Name == uname).First().ConnectionId = id;
-                Clients.Client(id).onConnected(id, username, Users, Rooms);
+                if (user.active == false)
+                {
+                    Clients.Client(id).onLoginFail();
+                    login = false;
+                }
+            }
+            else if (ActiveUsers.Where(p => p.Name == username).Count() == 1 && roomname == "general")
+            {
+                ActiveUsers.Where(p => p.Name == uname).First().ConnectionId = id;
+                var rooms = _context.Rooms;
+                List<Room> nr = new List<Room>();
+                foreach (var m in rooms)
+                {
+                    if (m.RoomName == "general")
+                        continue;
+                    Room r = new Room(m);
+                    nr.Add(r);
+                }
+                Clients.Client(id).onConnected(id, username, ActiveUsers, nr);
             }
             if (condition == "join")
             {
-                JoinGroup(username, roomname);
-                Users.Where(p => p.Name == username).First().ConnectionId = id;
-                Clients.Client(id).onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
-                Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
-                condition = "";
-            }
-            else if (Rooms.Where(p => p.Members.Where(o => o.Name == username).Count() > 0).Count() > 0)
-            {
 
-                Users.Where(p => p.Name == username).First().ConnectionId = id;
-                Clients.Client(id).onRoomConnected(id, username, Rooms.Where(p => p.RoomName == roomname).First().Members);
+                if (!_context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users.Contains(_context.Users.FirstOrDefault(p => p.UserName == username)))
+                {
+                    Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
+                    JoinGroup(username, roomname);
+                }
+
+                ActiveUsers.Where(p => p.Name == username).First().ConnectionId = id;
+                var users = _context.Rooms.Where(p => p.RoomName == roomname).First().Users.ToList();
+                List<User> nu = new List<User>();
+                foreach (var m in users)
+                {
+                    User u = new User(m);
+                    nu.Add(u);
+                }
+                Clients.Client(id).onRoomConnected(id, username, nu);
+                condition = "";
+                var messages = _context.Messages.Where(p => p.Room.RoomName == roomname);
+                List<Message> nm = new List<Message>();
+                foreach (var m in messages)
+                {
+                    Message n = new Message(m);
+                    nm.Add(n);
+                }
+                Clients.Client(id).showAllMessages(roomname, nm);
             }
+
+
         }
         public void Send(string name, string message)
         {
-            name = Users.Where(p => p.ConnectionId == Context.ConnectionId).First().Name;
+
+            _context.Messages.Add(new Simple_Chat.Message()
+            {
+                MessageText = message,
+                User = _context.Users.FirstOrDefault(p => p.UserName == name),
+                Room = _context.Rooms.FirstOrDefault(p => p.RoomName == "general")
+            });
+            _context.SaveChanges();
+
             Clients.All.addMessage(name, message);
         }
-
-        public void Connect(string id, string username)
+        public void SendToGroup(string username, string message, string roomname)
         {
-            id = Context.ConnectionId;
+            _context.Messages.Add(new Simple_Chat.Message()
+            {
+                MessageText = message,
+                User = _context.Users.FirstOrDefault(p => p.UserName == username),
+                Room = _context.Rooms.FirstOrDefault(p => p.RoomName == roomname)
+            });
+            _context.SaveChanges();
+            Clients.All.addMessageToRoom(username, message, roomname);
+        }
+
+        public void Connect(string username, string password)
+        {
+
+            var id = Context.ConnectionId;
             uname = username;
             login = true;
-            if (Users.All(x => x.ConnectionId != id))
+            if (ActiveUsers.All(x => x.ConnectionId != id) && ActiveUsers.All(x => x.Name != username) && _context.Users.Where(p => p.UserName == username).Count() > 0)
             {
-                Users.Add(new User() { ConnectionId = id, Name = username });
+                var user = _context.Users.Where(p => p.UserName == username).First();
+                if (user.Password == password && user.active)
+                {
+                    ActiveUsers.Add(new User() { ConnectionId = id, Name = username, Password = password });
+                    Clients.Caller.onLogin();
+                }
+                else
+                {
+                    Clients.Caller.onLoginFail();
+                }
+            }
+            else
+            {
+                Clients.Caller.onLoginFail();
             }
         }
 
-
-        //public override Task OnDisconnected(bool stopCalled)
-        //{
-        //    User item = Users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-        //    if (!ReferenceEquals(item, null))
-        //    {
-        //        Users.Remove(item);
-        //        var id = Context.ConnectionId;
-        //        Clients.All.onUserDisconnected(id, item.Name);
-        //    }
-
-        //    return base.OnDisconnected(stopCalled);
-        //}
 
         public void Disconnect(string condition, string p)
         {
@@ -97,57 +191,60 @@
 
         public void Create(string group)
         {
-            var id = Context.ConnectionId;
-            var guid = Guid.NewGuid();
-            Rooms.Add(new Room
+            if (_context.Rooms.Where(p => p.RoomName == group).Count() == 0)
             {
-                RoomID = guid,
-                RoomName = group,
-                Members = new List<User>()
-            });
+                var id = Context.ConnectionId;
+                _context.Rooms.Add(new Simple_Chat.Room() { RoomName = group });
+                _context.SaveChanges();
 
-            Clients.All.onNewGroupCreating(guid, group);
-
+                Clients.All.onNewGroupCreating(group);
+            }
+            else
+            {
+                Clients.Caller.failedRoomCreating();
+            }
         }
-
 
 
         public void JoinGroup(string username, string roomname)
         {
-            Rooms.Where(p => p.RoomName == roomname).First().Members.Add(new User
-            {
-                Name = username,
-                ConnectionId = Context.ConnectionId
-            });
+            Simple_Chat.User user = _context.Users.FirstOrDefault(p => p.UserName == username);
+            _context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users.Add(user);
+            _context.SaveChanges();
             condition = "join";
 
         }
         public void OutFromRoom(string username, string roomname)
         {
-            int index = -1;
-            for (int i = 0; i < Rooms.Where(p => p.RoomName == roomname).First().Members.Count(); i++)
-            {
-                if (Rooms.Where(p => p.RoomName == roomname).First().Members[i].Name == username)
-                {
-                    index = i;
-                    break;
-                }
-            }
-            for (int i = 0; i < Rooms.Count(); i++)
-            {
-                if (Rooms[i].RoomName == roomname)
-                {
-                    Rooms[i].Members.RemoveRange(index, 1);
-                    break;
-                }
-            }
+            Simple_Chat.User user = _context.Users.FirstOrDefault(p => p.UserName == username);
+            _context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users.Remove(user);
+            _context.SaveChanges();
             Clients.All.outFromRoom(username);
             Clients.All.onRoomOut(username, roomname);
         }
-
-        public void SendToGroup(string username, string message, string roomname)
+        public void ToGeneral(string username, string roomname)
         {
-            Clients.All.addMessageToRoom(username, message, roomname);
+            Clients.Caller.ToGeneral(username);
+        }
+
+
+        public void SubmitRegistration(string username, string password, string email)
+        {
+            string tok = Guid.NewGuid().ToString();
+            bool t;
+            if (_context.Users.Where(p => p.UserName == username).Count() == 0 && _context.Users.Where(p => p.eMail == email).Count() == 0)
+            {
+                Simple_Chat.User user = new Simple_Chat.User() { active = false, eMail = email, Password = password, UserName = username, token = tok };
+                _context.Users.Add(user);
+                t = true;
+                _context.SaveChanges();
+                MailProvider.SendMail(email, tok);
+            }
+            else
+            {
+                t = false;
+            }
+            Clients.Caller.onRegistration(t);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -17,12 +18,7 @@ namespace Simple_Chat
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
-        //public void Session_OnStart()
-        //{
-        //    Application.Lock();
-        //    Application["UsersOnline"] = (int)Application["UsersOnline"] + 1;
-        //    Application.UnLock();
-        //}
+
 
         //public void Session_OnEnd()
         //{

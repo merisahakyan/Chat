@@ -12,14 +12,12 @@ namespace Simple_Chat
     using System;
     using System.Collections.Generic;
     
-    public partial class Message
+    public partial class sysdiagram
     {
-        public int MessageID { get; set; }
-        public int UserID { get; set; }
-        public int RoomID { get; set; }
-        public string MessageText { get; set; }
-    
-        public virtual Room Room { get; set; }
-        public virtual User User { get; set; }
+        public string name { get; set; }
+        public int principal_id { get; set; }
+        public int diagram_id { get; set; }
+        public Nullable<int> version { get; set; }
+        public byte[] definition { get; set; }
     }
 }

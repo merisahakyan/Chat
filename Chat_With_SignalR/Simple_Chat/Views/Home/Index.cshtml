@@ -10,13 +10,13 @@
 <body>
     <input type="hidden" id="username" />
     <div class="main">
-        
+
         <div id="chatBody">
             <div id="main_div">
                 <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:400px; overflow:auto">
                     <div id="joindiv" style="text-align:center">
-                        <input type="button" value="Join" id="join"  />
-                        <input type="hidden" id="joinroom"/>
+                        <input type="button" value="Join" id="join" />
+                        <input type="hidden" id="joinroom" />
                     </div>
                 </div>
 
@@ -32,18 +32,25 @@
 
                 </div>
                 <div id="allrooms">
-                    <p style="color:red"><b>Rooms</b></p>
-                    <input type="button" style="width:250px" id="create" value="Create Room" />
-                    <div id="rooms" style="overflow:auto">
-                        
+                    <p id="roomvalidation" style="color:red">Room already exists!</p>
+                    <div id="creatingdiv">
+                        <input type="button" style="width:200px" id="create" value="Create Room" />
                     </div>
-                    
-                    
+                    <div style="overflow:auto">
+                        <div id="joinedrooms">
+                            <p style="color:red">Joined Rooms</p>
+                        </div>
+                        <div id="rooms">
+                            <p style="color:red">Rooms</p>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>
-        
-       
+
+
     </div>
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>

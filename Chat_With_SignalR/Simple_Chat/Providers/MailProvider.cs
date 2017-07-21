@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace Simple_Chat.Providers
 {
-    public class MailProvider
+    public static class MailProvider
     {
         private static readonly string PasswordHash = "P@@Sw0rd";
         private static readonly string SaltKey = "S@LT&KEY";
         private static readonly string VIKey = "@1B2c3D4e5F6g7H8";
-        private string Decrypt(string encryptedText)
+        private static string Decrypt(string encryptedText)
         {
             byte[] cipherTextBytes = Convert.FromBase64String(encryptedText);
             byte[] keyBytes = new Rfc2898DeriveBytes(PasswordHash, Encoding.ASCII.GetBytes(SaltKey)).GetBytes(256 / 8);
@@ -33,7 +33,7 @@ namespace Simple_Chat.Providers
             cryptoStream.Close();
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount).TrimEnd("\0".ToCharArray());
         }
-        public void SendMail(string sendto, string token)
+        public static void SendMail(string sendto, string token)
         {
             Configuration config = System.Web.HttpContext.Current != null ?
                 System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~") :
@@ -54,13 +54,13 @@ namespace Simple_Chat.Providers
                 };
 
 
-
-                token = "<a href=\"" + token + "\">" + token + "</a>";
+                string body = "http://localhost:48088//Home/ActivatePage?token=" + token;
+               // token = "<a href=\"" + href + "\">" + token + "</a>";
                 message.To.Add(new MailAddress(sendto));
                 message.CC.Add(new MailAddress(from));
                 message.Subject = "Activate your account!";
-                message.IsBodyHtml = true;
-                message.Body = token;
+                //message.IsBodyHtml = true;
+                message.Body = body;
                 var client = new SmtpClient
                 {
                     Host = host,

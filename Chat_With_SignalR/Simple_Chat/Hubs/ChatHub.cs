@@ -2,16 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.AspNet.SignalR;
     using Models;
     using System;
-    using System.Web.SessionState;
-    using System.Web;
-    using System.Collections.Concurrent;
     using Providers;
-    using System.Data.Entity;
-    using AutoMapper;
 
     public class ChatHub : Hub
     {

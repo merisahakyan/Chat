@@ -13,13 +13,14 @@
 
         <div id="chatBody">
             <div id="main_div">
-                <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:400px; overflow:auto">
-                    <div id="joindiv" style="text-align:center">
-                        <input type="button" value="Join" id="join" />
-                        <input type="hidden" id="joinroom" />
-                    </div>
+                <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:400px; overflow:auto; overflow-y:auto">
+                    
                 </div>
+                <div id="joindiv" style="position:absolute;left:250px;top:400px">
 
+                    <input type="button" value="Join" id="join" />
+                    <input type="hidden" id="joinroom" />
+                </div>
                 <div id="inputForm">
                     <input type="text" id="message" style="position:absolute; width:700px;height:40px;left:250px;top:460px" />
                     <input type="button" id="sendmessage" value="send" style="position:absolute; width:100px;height:40px;left:950px;top:460px" />

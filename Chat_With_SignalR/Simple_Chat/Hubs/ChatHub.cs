@@ -20,8 +20,37 @@
             var id = Context.ConnectionId;
             Simple_Chat.User user = null;
 
-            if (!ReferenceEquals(username, null))
+            if (!ReferenceEquals(username, null) && username != "")
                 user = _context.Users.Where(p => p.UserName == username).First();
+            if (condition == "join")
+            {
+
+                if (!_context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users.Contains(_context.Users.FirstOrDefault(p => p.UserName == username)))
+                {
+                    Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
+                    JoinGroup(username, roomname);
+                }
+
+                ActiveUsers.Where(p => p.Name == username).First().ConnectionId = id;
+                var users = _context.Rooms.Where(p => p.RoomName == roomname).First().Users.ToList();
+                List<User> nu = new List<User>();
+                foreach (var m in users)
+                {
+                    User u = new User(m);
+                    nu.Add(u);
+                }
+                Clients.Client(id).onRoomConnected(id, username, nu);
+                condition = "";
+                var messages = _context.Messages.Where(p => p.Room.RoomName == roomname);
+                List<Message> nm = new List<Message>();
+                foreach (var m in messages)
+                {
+                    Message n = new Message(m);
+                    nm.Add(n);
+                }
+                Clients.Client(id).showAllMessages(roomname, nm);
+            }
+            else
             if (ActiveUsers.Where(p => p.Name == username).Count() == 1 && uname != null && !ReferenceEquals(user, null) && condition == "")
             {
                 if (user.active)
@@ -87,35 +116,6 @@
                 }
                 Clients.Client(id).onConnected(id, username, ActiveUsers, nr);
             }
-            if (condition == "join")
-            {
-
-                if (!_context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users.Contains(_context.Users.FirstOrDefault(p => p.UserName == username)))
-                {
-                    Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
-                    JoinGroup(username, roomname);
-                }
-
-                ActiveUsers.Where(p => p.Name == username).First().ConnectionId = id;
-                var users = _context.Rooms.Where(p => p.RoomName == roomname).First().Users.ToList();
-                List<User> nu = new List<User>();
-                foreach (var m in users)
-                {
-                    User u = new User(m);
-                    nu.Add(u);
-                }
-                Clients.Client(id).onRoomConnected(id, username, nu);
-                condition = "";
-                var messages = _context.Messages.Where(p => p.Room.RoomName == roomname);
-                List<Message> nm = new List<Message>();
-                foreach (var m in messages)
-                {
-                    Message n = new Message(m);
-                    nm.Add(n);
-                }
-                Clients.Client(id).showAllMessages(roomname, nm);
-            }
-
 
         }
         public void Send(string name, string message)
@@ -144,17 +144,16 @@
             var usersfornotify = _context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users;
 
             List<string> notify = new List<string>();
-            foreach(var m in usersfornotify)
+            foreach (var m in usersfornotify)
             {
-                if (ActiveUsers.Contains(new User(m)) && m.UserName!=username)
+                if (ActiveUsers.Contains(new User(m)) && m.UserName != username)
                     notify.Add(ActiveUsers.FirstOrDefault(p => p.Name == (new User(m)).Name).ConnectionId);
             }
-            Clients.Clients(notify).desktopNot(roomname,username,message);
+            Clients.Clients(notify).desktopNot(roomname, username, message);
         }
 
         public void Connect(string username, string password)
         {
-
             var id = Context.ConnectionId;
             uname = username;
             login = true;
@@ -176,8 +175,6 @@
                 Clients.Caller.onLoginFail();
             }
         }
-
-
         public void Disconnect(string condition, string p)
         {
             var id = Context.ConnectionId;
@@ -187,7 +184,6 @@
                 ChatHub.condition = condition;
             }
         }
-
         public void Create(string group)
         {
             if (_context.Rooms.Where(p => p.RoomName == group).Count() == 0)
@@ -203,15 +199,12 @@
                 Clients.Caller.failedRoomCreating();
             }
         }
-
-
         public void JoinGroup(string username, string roomname)
         {
             Simple_Chat.User user = _context.Users.FirstOrDefault(p => p.UserName == username);
             _context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users.Add(user);
             _context.SaveChanges();
             condition = "join";
-
         }
         public void OutFromRoom(string username, string roomname)
         {
@@ -221,29 +214,41 @@
             Clients.All.outFromRoom(username);
             Clients.All.onRoomOut(username, roomname);
         }
+        public void OutButton(string username, string roomname)
+        {
+            Simple_Chat.User user = _context.Users.FirstOrDefault(p => p.UserName == username);
+            _context.Rooms.FirstOrDefault(p => p.RoomName == roomname).Users.Remove(user);
+            _context.SaveChanges();
+            Clients.Caller.outRoomButton(roomname);
+            Clients.All.onRoomOut(username, roomname);
+        }
         public void ToGeneral(string username, string roomname)
         {
             Clients.Caller.ToGeneral(username);
         }
-
-
         public void SubmitRegistration(string username, string password, string email)
         {
             string tok = Guid.NewGuid().ToString();
             bool t;
-            if (_context.Users.Where(p => p.UserName == username).Count() == 0 && _context.Users.Where(p => p.eMail == email).Count() == 0)
+            if (_context.Users.Where(p => p.UserName == username).Count() == 0 && _context.Users.Where(p => p.eMail == email).Count() == 0 && username.Length < 20 && password.Length >= 6)
             {
+                MailProvider.SendMail(email, tok);
                 Simple_Chat.User user = new Simple_Chat.User() { active = false, eMail = email, Password = password, UserName = username, token = tok };
                 _context.Users.Add(user);
                 t = true;
                 _context.SaveChanges();
-                MailProvider.SendMail(email, tok);
             }
             else
             {
                 t = false;
             }
             Clients.Caller.onRegistration(t);
+        }
+        public void LogOut(string username)
+        {
+            ActiveUsers.Remove(ActiveUsers.FirstOrDefault(p => p.Name == username));
+            Clients.Caller.onLogOut();
+            Clients.All.onUserDisconnected(username);
         }
     }
 }

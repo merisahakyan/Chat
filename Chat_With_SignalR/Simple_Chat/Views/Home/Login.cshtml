@@ -8,7 +8,7 @@
 
     <div id="loginBlock">
         <h2>Login</h2>
-        <p id="loginvalidation" style="color:red">Login Failed!</p>
+        <p id="loginvalidation" style="color:red"></p>
         Username:<br />
         <input id="txtUserName" type="text" /><br />
         Password:<br />
@@ -18,15 +18,14 @@
     <hr />
     <div id="registrationform">
         <h2>or Register</h2>
-        <p id="entervalidation" style="color:red">Enter all properties!</p>
-        <p id="namevalidation" style="color:red">Username must contains less than 20 characters!</p>
+        <p id="validation" style="color:red"></p>
         Username:<br />
-        <input id="r_username" type="text" /><br />
+        <input id="r_username" type="text" placeholder="less than 20 characters" /><br />
         Password:<br />
-        <input id="r_password" type="password" /><br />
+        <input id="r_password" type="password" placeholder="more than 6 characters" /><br />
         eMail:<br />
-        <input id="r_email" type="email" /><br />
-        <input type="button" id="submitregistration"  value="Register" /><br />
+        <input id="r_email" type="email" placeholder="default@example.com" /><br />
+        <input type="button" id="submitregistration" value="Register" /><br />
 
     </div>
     <h4 id="activate">Activate your account!</h4>

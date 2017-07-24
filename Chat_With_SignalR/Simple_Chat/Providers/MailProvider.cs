@@ -40,7 +40,7 @@ namespace Simple_Chat.Providers
                 ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             var mailSettings = config.GetSectionGroup("system.net/mailSettings") as MailSettingsSectionGroup;
-            if (mailSettings == null) return ;
+            if (mailSettings == null) return;
             try
             {
                 int port = mailSettings.Smtp.Network.Port;
@@ -55,11 +55,9 @@ namespace Simple_Chat.Providers
 
 
                 string body = "http://localhost:48088//Home/ActivatePage?token=" + token;
-               // token = "<a href=\"" + href + "\">" + token + "</a>";
                 message.To.Add(new MailAddress(sendto));
                 message.CC.Add(new MailAddress(from));
                 message.Subject = "Activate your account!";
-                //message.IsBodyHtml = true;
                 message.Body = body;
                 var client = new SmtpClient
                 {
@@ -69,7 +67,7 @@ namespace Simple_Chat.Providers
                     EnableSsl = true
                 };
                 client.Send(message);
-                
+
             }
             catch
             {

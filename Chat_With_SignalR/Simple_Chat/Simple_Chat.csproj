@@ -230,8 +230,6 @@
     <Compile Include="Message.cs">
       <DependentUpon>ChatDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\Room.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\MailProvider.cs" />
@@ -322,6 +320,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Repo\Repo.csproj">
+      <Project>{a06b5759-2455-4ae1-ad44-ed7c7cffb023}</Project>
+      <Name>Repo</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

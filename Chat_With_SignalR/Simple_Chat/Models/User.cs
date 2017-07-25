@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Repo.Models;
+using System;
 
 namespace Simple_Chat.Models
 {
@@ -8,7 +9,7 @@ namespace Simple_Chat.Models
         {
 
         }
-        public User(Simple_Chat.User user)
+        public User(UserModel user)
         {
             this.Name = user.UserName;
             this.Password = user.Password;

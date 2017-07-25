@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple_Chat", "Simple_Chat\Simple_Chat.csproj", "{75AF531D-A87B-43B2-B298-4B4620DE01E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repo", "Repo\Repo.csproj", "{A06B5759-2455-4AE1-AD44-ED7C7CFFB023}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{75AF531D-A87B-43B2-B298-4B4620DE01E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75AF531D-A87B-43B2-B298-4B4620DE01E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75AF531D-A87B-43B2-B298-4B4620DE01E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A06B5759-2455-4AE1-AD44-ED7C7CFFB023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A06B5759-2455-4AE1-AD44-ED7C7CFFB023}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A06B5759-2455-4AE1-AD44-ED7C7CFFB023}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A06B5759-2455-4AE1-AD44-ED7C7CFFB023}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

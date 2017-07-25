@@ -87,8 +87,8 @@
     chat.client.showAllMessages = function (roomname, messages) {
 
         for (var i = 0; i < messages.length; i++)
-            $('#chatroom').append('<p><b>' + messages[i].Sender
-                + '</b>: ' + messages[i].Text + '</p>');
+            $('#chatroom').append('<p><b>' + messages[i].UserName
+                + '</b>: ' + messages[i].Message + '</p>');
         $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
     }
 
@@ -145,7 +145,7 @@
         $('#chatBody').show();
 
         for (var i = 0; i < members.length; i++) {
-            AddUserToRoom(members[i].ConnectionId, members[i].Name);
+            AddUserToRoom(members[i].ConnectionId, members[i].UserName);
         }
 
     }
@@ -247,6 +247,7 @@
             $("#create").hide();
             $('<input/>').attr({
                 type: 'text',
+                id:'roomname1'
             }).appendTo('#creatingdiv');
 
             var b = $('<button>',
@@ -255,8 +256,8 @@
         id: 'createroom',
         click: function (roomname) {
             $("#create").show();
-            roomname = $('#roomname').val();
-            $("#roomname").remove();
+            roomname = $('#roomname1').val();
+            $("#roomname1").remove();
             $("#createroom").remove();
             chat.server.create(roomname);
 
@@ -359,9 +360,7 @@
             }
             if ($("#r_username").val() == '' || $("#r_password").val() == '' || $("#r_email").val() == '') {
                 $("#validation").append('Enter all properties <br/>')
-
             }
-
         }
 
 
@@ -446,13 +445,12 @@
             id: 'out' + roomname,
             click: function () {
                 chat.server.outButton(sessionStorage["username"], roomname);
-
             }
         });
             c.css('float', 'right');
             $("#" + roomname).append(c);
             $("#" + roomname).append(b);
-            
+
 
         });
         $("#" + roomname).mouseleave(function () {
@@ -460,7 +458,6 @@
             $("#out" + roomname).remove();
 
         });
-
     }
 });
 

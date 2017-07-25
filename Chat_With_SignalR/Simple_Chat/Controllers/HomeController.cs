@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Repo;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -6,7 +7,7 @@ namespace Simple_Chat.Controllers
 {
     public class HomeController : Controller
     {
-        ChatDataContext _context = new ChatDataContext();
+        DataManager manager = new DataManager();
         public ActionResult Index()
         {
             return View();
@@ -27,16 +28,8 @@ namespace Simple_Chat.Controllers
         }
         public ActionResult ActivatePage(string token)
         {
-            if (_context.Users.Where(p => p.token == token).Count() == 1 && _context.Users.Where(p => p.token == token).First().active == false)
-            {
-                _context.Users.Where(p => p.token == token).First().active = true;
-                _context.Users.Where(p => p.token == token).First().token = Guid.NewGuid().ToString();
-                _context.SaveChanges();
-                ViewData["activationmessage"] = "You'r activated your account!";
 
-            }
-            else
-                ViewData["activationmessage"] = "Something went wrong!";
+            ViewData["activationmessage"] = manager.CheckingActivation(token);
             return View();
 
         }

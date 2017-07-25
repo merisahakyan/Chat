@@ -262,5 +262,18 @@ namespace Repo
             return rooms;
 
         }
+        public string CheckingActivation(string token)
+        {
+            if (context.Users.Where(p => p.token == token).Count() == 1 && context.Users.Where(p => p.token == token).First().active == false)
+            {
+                context.Users.Where(p => p.token == token).First().active = true;
+                context.Users.Where(p => p.token == token).First().token = Guid.NewGuid().ToString();
+                context.SaveChanges();
+                return "You'r activated your account!";
+
+            }
+            else
+                return "Something went wrong!";
+        }
     }
 }

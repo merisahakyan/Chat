@@ -207,56 +207,19 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="ChatDataModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ChatDataModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ChatDataModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ChatDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ChatDataModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ChatDataModel.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\ChatHub.cs" />
-    <Compile Include="Message.cs">
-      <DependentUpon>ChatDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\MailProvider.cs" />
-    <Compile Include="Room.cs">
-      <DependentUpon>ChatDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Startup.cs" />
-    <Compile Include="sysdiagram.cs">
-      <DependentUpon>ChatDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="User.cs">
-      <DependentUpon>ChatDataModel.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Start\Content\bootstrap.css" />
     <Content Include="App_Start\Content\bootstrap.min.css" />
-    <Content Include="ChatDataModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ChatDataModel.edmx</DependentUpon>
-      <LastGenOutput>ChatDataModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="ChatDataModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ChatDataModel.edmx</DependentUpon>
-      <LastGenOutput>ChatDataModel.cs</LastGenOutput>
-    </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="App_Start\Content\Site.css" />
@@ -264,13 +227,6 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <EntityDeploy Include="ChatDataModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ChatDataModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="ChatDataModel.edmx.diagram">
-      <DependentUpon>ChatDataModel.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\easyNotify.js" />

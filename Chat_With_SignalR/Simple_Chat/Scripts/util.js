@@ -491,7 +491,7 @@
                    $("#history").empty();
                    var edit = $('<input>', {
                        id: 'foredit' + id,
-                       val: message,
+                       val: $("#m"+id).text(),
                        keypress: function (e) {
                            if (e.which == 13) {
                                flag = true;

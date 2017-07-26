@@ -12,17 +12,10 @@ namespace Repo
     using System;
     using System.Collections.Generic;
     
-    public partial class Message
+    public partial class OldMessage
     {
-        public int MessageID { get; set; }
-        public int UserID { get; set; }
-        public int RoomID { get; set; }
-        public string MessageText { get; set; }
         public System.Guid ID { get; set; }
+        public string MessageText { get; set; }
         public System.DateTime Time { get; set; }
-        public System.DateTime DateTime { get; set; }
-    
-        public virtual Room Room { get; set; }
-        public virtual User User { get; set; }
     }
 }

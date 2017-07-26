@@ -56,17 +56,16 @@
 
     var chat = $.connection.chatHub;
 
-    chat.client.addMessage = function (name, message) {
+    chat.client.addMessage = function (message) {
         if (sessionStorage["roomname"] == 'general') {
-            $('#chatroom').append('<p><b>' + name
-                + '</b>: ' + message + '</p>');
+            AddMessage(message.ID, message.UserName, message.Message, message.Time)
             $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
 
             if (name != sessionStorage["username"]) {
                 var options = {
                     title: sessionStorage["roomname"],
                     options: {
-                        body: name + ': ' + message,
+                        body: name + ': ' + message.Message,
                         lang: 'en-US',
                     }
                 };
@@ -87,20 +86,21 @@
     chat.client.showAllMessages = function (roomname, messages) {
 
         for (var i = 0; i < messages.length; i++)
-            $('#chatroom').append('<p><b>' + messages[i].UserName
-                + '</b>: ' + messages[i].Message + '</p>');
+            AddMessage(messages[i].ID, messages[i].UserName, messages[i].Message, messages[i].Time);
         $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
     }
 
-    chat.client.addMessageToRoom = function (name, message, roomname) {
+    chat.client.addMessageToRoom = function (message) {
 
-        if (roomname == sessionStorage["roomname"]) {
-            $('#chatroom').append('<p><b>' + name
-               + '</b>: ' + message + '</p>');
+        if (message.RoomName == sessionStorage["roomname"]) {
+            AddMessage(message.ID, message.UserName, message.Message, message.Time);
             $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
         }
     };
-
+    chat.client.onEditingMsg = function (id, newmsg) {
+        $("#m" + id).empty();
+        $("#m" + id).append(newmsg)
+    }
     chat.client.onConnected = function (id, userName, allUsers, joinedrooms, rooms) {
         $("username").val(userName);
 
@@ -108,11 +108,11 @@
         if (userName.length > 15)
             var name = userName.substr(0, 15) + '...';
         $("#welcome").append(name + '!');
-        $("#welcome").attr('title', username);
+        $("#welcome").attr('title', userName);
 
         for (var i = 0; i < allUsers.length; i++) {
 
-            AddUser(allUsers[i].ConnectionId, allUsers[i].Name);
+            AddUser(allUsers[i].ConnectionId, allUsers[i].UserName);
         }
         for (var i = 0; i < rooms.length; i++) {
             AddGroup(rooms[i].RoomName);
@@ -196,12 +196,23 @@
         $("#roomvalidation").show();
 
     }
-    //$.connection.hub.disconnected(function () {
-
-
-    //    $.connection.hub.start();
-    //});
-
+    chat.client.onCallingHistory = function (history) {
+        if (history.length > 0) {
+            var b = $('<button>', {
+                text: 'Close',
+                id: 'closehistory',
+                click: function () {
+                    $("#history").empty();
+                }
+            })
+            b.css('float', 'right');
+            $("#history").append(b);
+        }
+        for (var i = 0; i < history.length; i++) {
+            $("#history").append('</br><div>' + history[i].Message + '</br ><span style="font-size:60%">' + history[i].Edited + '</span></div>');
+            
+        }
+    }
 
     $.connection.hub.start().done(function () {
 
@@ -247,7 +258,7 @@
             $("#create").hide();
             $('<input/>').attr({
                 type: 'text',
-                id:'roomname1'
+                id: 'roomname1'
             }).appendTo('#creatingdiv');
 
             var b = $('<button>',
@@ -458,6 +469,66 @@
             $("#out" + roomname).remove();
 
         });
+    }
+
+    function AddMessage(id, username, message, time) {
+        $('#chatroom').append('</br><p id="' + id + '"><b>' + username + '</b >: ' + '<span id="m' + id + '">' + message + '</span>  </p>');
+        $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time + '</span>');
+        var flag = true;
+        if (username == sessionStorage["username"]) {
+
+            $("#" + id).mouseenter(function () {
+                if (flag) {
+                    var b = $('<button>',
+           {
+               text: 'Edit',
+               id: 'edit' + id,
+               click: function () {
+                   flag = false;
+                   $("#m" + id).hide();
+                   $("#edit" + id).hide();
+                   $("#datetime" + id).remove();
+                   $("#history").empty();
+                   var edit = $('<input>', {
+                       id: 'foredit' + id,
+                       val: message,
+                       keypress: function (e) {
+                           if (e.which == 13) {
+                               flag = true;
+                               $("#edit" + id).show();
+                               $("#m" + id).show();
+                               var msg = $("#foredit" + id).val();
+                               $("#foredit" + id).remove();
+                               $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time + '</span>');
+                               chat.server.editMessage(id, msg);
+                           }
+                       }
+                   })
+                   
+                   $("#" + id).append(edit);
+               }
+           });
+                    b.css('float', 'right');
+                    $("#" + id).append(b);
+
+                    var c = $('<button>', {
+                        text: 'History',
+                        id: 'h' + id,
+                        click: function () {
+                            $("#history").empty();
+                            chat.server.getHistory(id);
+                        }
+                    })
+                    c.css('float', 'right');
+                    $("#" + id).append(c);
+                }
+
+            });
+            $("#" + id).mouseleave(function () {
+                $("#edit" + id).remove();
+                $("#h" + id).remove();
+            })
+        }
     }
 });
 

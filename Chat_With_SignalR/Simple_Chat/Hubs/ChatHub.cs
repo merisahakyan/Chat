@@ -3,14 +3,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.AspNet.SignalR;
-    using Models;
+
     using System;
     using Providers;
     using Repo.Models;
 
     public class ChatHub : Hub
     {
-        private static List<User> ActiveUsers = new List<User>();
+        private static List<UserModel> ActiveUsers = new List<UserModel>();
         static string uname;
         static bool login = false;
         static string condition = "";
@@ -32,7 +32,7 @@
                     JoinGroup(username, roomname);
                 }
 
-                ActiveUsers.Where(p => p.Name == username).First().ConnectionId = id;
+                ActiveUsers.Where(p => p.UserName == username).First().ConnectionId = id;
                 var users = manager.GetUsersByRoom(roomname);
                 Clients.Client(id).onRoomConnected(id, username, users);
                 condition = "";
@@ -40,24 +40,23 @@
                 Clients.Client(id).showAllMessages(roomname, messages);
             }
             else
-            if (ActiveUsers.Where(p => p.Name == username).Count() == 1 && uname != null && !ReferenceEquals(user, null) && condition == "")
+            if (ActiveUsers.Where(p => p.UserName == username).Count() == 1 && uname != null && !ReferenceEquals(user, null) && condition == "")
             {
                 if (user.active)
                 {
-                    ActiveUsers.Where(p => p.Name == uname).First().ConnectionId = id;
+                    ActiveUsers.Where(p => p.UserName == uname).First().ConnectionId = id;
 
                     var jr = manager.GetRoomsByUser(username);
                     var rooms = manager.GetRooms(username);
 
-                    Clients.Client(id).onConnected(id, username, ActiveUsers, jr, rooms);
+                    Clients.Client(id).onConnected(Context.ConnectionId, username, ActiveUsers, jr, rooms);
                     if (login)
                     {
                         Clients.AllExcept(id).onNewUserConnected(id, username, roomname);
                         login = false;
                     }
 
-                    var messages = manager.GetMessagesByRoomName("general");
-                    Clients.Client(id).showAllMessages("general", messages);
+                    Clients.Client(id).showAllMessages("general", manager.GetMessagesByRoomName("general"));
 
                 }
 
@@ -73,21 +72,28 @@
         }
         public void Send(string name, string message)
         {
-            manager.InsertMessage(name, "general", message);
-            Clients.All.addMessage(name, message);
+            var guid = Guid.NewGuid();
+            manager.InsertMessage(guid, name, "general", message);
+            Clients.All.addMessage(manager.GetMessageByID(guid));
         }
         public void SendToGroup(string username, string message, string roomname)
         {
-            manager.InsertMessage(username, roomname, message);
-            Clients.All.addMessageToRoom(username, message, roomname);
+            var guid = Guid.NewGuid();
+            manager.InsertMessage(guid, username, roomname, message);
+            Clients.All.addMessageToRoom(manager.GetMessageByID(guid));
             var usersfornotify = manager.GetUsersByRoom(roomname);
             List<string> notify = new List<string>();
             foreach (var m in usersfornotify)
             {
-                if (ActiveUsers.Contains(new User(m)))
-                    notify.Add(ActiveUsers.FirstOrDefault(p => p.Name == (new User(m)).Name).ConnectionId);
+                if (ActiveUsers.Contains(m))
+                    notify.Add(ActiveUsers.FirstOrDefault(p => p.UserName == m.UserName).ConnectionId);
             }
             Clients.Clients(notify).desktopNot(roomname, username, message);
+        }
+        public void EditMessage(string id,string newmessage)
+        {
+            manager.EditMessage(Guid.Parse(id), newmessage);
+            Clients.All.onEditingMsg(id, newmessage);
         }
 
         public void Connect(string username, string password)
@@ -95,11 +101,11 @@
             var id = Context.ConnectionId;
             uname = username;
             login = true;
-            if (ActiveUsers.All(x => x.ConnectionId != id) && ActiveUsers.All(x => x.Name != username))
+            if (ActiveUsers.All(x => x.ConnectionId != id) && ActiveUsers.All(x => x.UserName != username))
             {
                 if (manager.Login(username, password) && manager.GetUserByName(username).active)
                 {
-                    ActiveUsers.Add(new User() { ConnectionId = id, Name = username, Password = password });
+                    ActiveUsers.Add(new UserModel() { ConnectionId = id, UserName = username, Password = password });
                     Clients.Caller.onLogin();
                 }
                 else
@@ -154,6 +160,11 @@
         {
             Clients.Caller.ToGeneral(username);
         }
+        public void GetHistory(string id)
+        {
+            List<HistoryModel> history = manager.GetHistory(id);
+            Clients.Caller.onCallingHistory(history);
+        }
         public void SubmitRegistration(string username, string password, string email)
         {
             string tok = Guid.NewGuid().ToString();
@@ -172,7 +183,7 @@
         }
         public void LogOut(string username)
         {
-            ActiveUsers.Remove(ActiveUsers.FirstOrDefault(p => p.Name == username));
+            ActiveUsers.Remove(ActiveUsers.FirstOrDefault(p => p.UserName == username));
             Clients.Caller.onLogOut();
             Clients.All.onUserDisconnected(username);
         }

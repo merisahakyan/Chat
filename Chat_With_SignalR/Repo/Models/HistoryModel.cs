@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Repo.Models
 {
-    public class MessageModel
+    public class HistoryModel
     {
-        public Guid ID { get; set; }
-        public string UserName { get; set; }
-        public string RoomName { get; set; }
         public string Message { get; set; }
-        public DateTime Time { get; set; }
+        public DateTime Edited { get; set; }
     }
 }

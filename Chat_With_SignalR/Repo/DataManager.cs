@@ -16,26 +16,22 @@ namespace Repo
         {
             context.InsertIntoUsers(UserName, eMail, Password, token, active);
         }
-        public void InsertMessage(string username, string roomname, string message)
+        public void InsertMessage(Guid guid, string username, string roomname, string message)
         {
-            context.InsertIntoMessages(username, roomname, message);
+            context.InsertIntoMessages(guid, username, roomname, message,DateTime.Now);
         }
+        public void EditMessage(Guid id, string newmessage)
+        {
+            context.EditMessage(id, newmessage,DateTime.Now);
+        }
+
         public void InsertRoom(string roomname)
         {
             context.InsertIntoRooms(roomname);
         }
         public bool IsValidNameOrEmail(string username, string email)
         {
-            
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select dbo.IsValidNameOrEmail('" + username + "','" + email + "')", conn))
-                {
-                    conn.Open();
-                    return (bool)cmd.ExecuteScalar();
-                }
-            }
-
+            return context.Database.SqlQuery<bool>("select dbo.IsValidNameOrEmail('" + username + "','" + email + "')").FirstOrDefault();
         }
         public void OutFromRoom(string username, string roomname)
         {
@@ -47,99 +43,51 @@ namespace Repo
         }
         public bool IsValidRoomName(string roomname)
         {
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select dbo.IsValidRoomName('" + roomname + "')", conn))
-                {
-                    conn.Open();
-                    return (bool)cmd.ExecuteScalar();
-                }
-            }
+            return context.Database.SqlQuery<bool>("select dbo.IsValidRoomName('" + roomname + "')").FirstOrDefault();
         }
         public bool Login(string username, string password)
         {
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select dbo.Login('" + username + "','" + password + "')", conn))
-                {
-                    conn.Open();
-                    return (bool)cmd.ExecuteScalar();
-                }
-            }
+            return context.Database.SqlQuery<bool>("select dbo.Login('" + username + "','" + password + "')").FirstOrDefault();
         }
         public bool RoomContainsUser(string username, string roomname)
         {
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select dbo.RoomContainsUser('" + username + "','" + roomname + "')", conn))
-                {
-                    conn.Open();
-                    return (bool)cmd.ExecuteScalar();
-                }
-            }
+            return context.Database.SqlQuery<bool>("select dbo.RoomContainsUser('" + username + "','" + roomname + "')").FirstOrDefault();
         }
         public UserModel GetUserByName(string username)
         {
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand(@"select * from Users where UserName='" + username + "'", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        r.Read();
-                        UserModel user = new UserModel();
-                        user.UserName = r["UserName"].ToString();
-                        user.eMail = r["eMail"].ToString();
-                        user.Password = r["Password"].ToString();
-                        user.token = r["token"].ToString();
-                        user.active = (bool)r["active"];
-                        return user;
-                    }
-                }
-            }
+            return context.Database.SqlQuery<UserModel>("select * from Users where UserName='" + username + "'").FirstOrDefault();
         }
         public RoomModel GetRoomByName(string roomname)
         {
-            RoomModel room = new RoomModel();
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand(@"select * from Rooms where RoomName='" + roomname + "'", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        r.Read();
-                        room.RoomName = r["RoomName"].ToString();
-                        room.RoomID = (int)r["RoomID"];
-                        return room;
-                    }
-                }
-            }
+            return context.Database.SqlQuery<RoomModel>("select * from Rooms where RoomName='" + roomname + "'").FirstOrDefault();
         }
 
         public UserModel GetUserByID(int id)
         {
+            return context.Database.SqlQuery<UserModel>("select * from Users where UserID=" + id).FirstOrDefault();
+        }
+        public List<HistoryModel> GetHistory(string id)
+        {
+            List<HistoryModel> history = new List<HistoryModel>();
             using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
             {
-                using (SqlCommand cmd = new SqlCommand(@"select * from Users where UserID=" + id, conn))
+                using (SqlCommand cmd = new SqlCommand("select * from OldMessages where ID='" + id.ToString().ToUpper() + "'", conn))
                 {
                     conn.Open();
                     using (var r = cmd.ExecuteReader())
                     {
-                        r.Read();
-                        UserModel user = new UserModel();
-                        user.UserName = r["UserName"].ToString();
-                        user.eMail = r["eMail"].ToString();
-                        user.Password = r["Password"].ToString();
-                        user.token = r["token"].ToString();
-                        user.active = (bool)r["active"];
-                        return user;
+                        while (r.Read())
+                        {
+                            HistoryModel model = new HistoryModel();
+                            model.Message = r["MessageText"].ToString();
+                            model.Edited = (DateTime)r["Time"];
+                            history.Add(model);
+                        }
                     }
                 }
             }
+            return history;
         }
-
         public List<UserModel> GetUsersByRoom(string roomname)
         {
             List<UserModel> users = new List<UserModel>();
@@ -177,12 +125,35 @@ namespace Repo
                             msg.RoomName = roomname;
                             msg.UserName = GetUserByID((int)r["UserID"]).UserName;
                             msg.Message = r["MessageText"].ToString();
+                            msg.ID = (Guid)r["ID"];
+                            msg.Time = (DateTime)r["DateTime"];
                             messages.Add(msg);
                         }
                     }
                 }
             }
             return messages;
+        }
+        public MessageModel GetMessageByID(Guid id)
+        {
+            MessageModel msg = new MessageModel();
+            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
+            {
+                using (SqlCommand cmd = new SqlCommand("select * from [Messages] where ID='" + id.ToString().ToUpper() + "'", conn))
+                {
+                    conn.Open();
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        r.Read();
+                        msg.RoomName = GetRoomByID((int)r["RoomID"]).RoomName;
+                        msg.UserName = GetUserByID((int)r["UserID"]).UserName;
+                        msg.Message = r["MessageText"].ToString();
+                        msg.ID = (Guid)r["ID"];
+                        msg.Time = (DateTime)r["DateTime"];
+                    }
+                }
+            }
+            return msg;
         }
         public List<RoomModel> GetRooms(string username)
         {
@@ -212,22 +183,7 @@ namespace Repo
         }
         public RoomModel GetRoomByID(int id)
         {
-            RoomModel room = new RoomModel();
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand(@"select * from Rooms where RoomID='" + id + "'", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        r.Read();
-                        room.RoomID = (int)r["RoomID"];
-                        room.RoomName = r["RoomName"].ToString();
-                        room.Users = GetUsersByRoom(r["RoomName"].ToString());
-                    }
-                }
-            }
-            return room;
+            return context.Database.SqlQuery<RoomModel>("select * from Rooms where RoomID=" + id).FirstOrDefault();
         }
         public List<RoomModel> GetRoomsByUser(string username)
         {

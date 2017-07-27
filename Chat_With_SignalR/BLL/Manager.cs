@@ -1,4 +1,5 @@
-﻿using BLL.Models;
+﻿using AutoMapper;
+using BLL.Models;
 using Repo;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,11 @@ namespace BLL
     public class Manager
     {
         DataManager datamanager = new DataManager();
+        IMapper imapper;
+        public Manager()
+        {
+            imapper = AutoMapperConfiguration.GetMapper();
+        }
         public void InsertUser(string UserName, string eMail, string Password, string token, bool active)
         {
             datamanager.InsertUser(UserName, eMail, Password, token, active);
@@ -23,7 +29,6 @@ namespace BLL
         {
             datamanager.EditMessage(id, newmessage);
         }
-
         public void InsertRoom(string roomname)
         {
             datamanager.InsertRoom(roomname);
@@ -54,83 +59,42 @@ namespace BLL
         }
         public UserModel GetUserByName(string username)
         {
-            return new UserModel(datamanager.GetUserByName(username));
-
+           return imapper.Map<UserModel>(datamanager.GetUserByName(username));
         }
         public RoomModel GetRoomByName(string roomname)
         {
-            return new RoomModel(datamanager.GetRoomByName(roomname));
+            return imapper.Map<RoomModel>(datamanager.GetRoomByName(roomname));
         }
 
         public UserModel GetUserByID(int id)
         {
-            return new UserModel(datamanager.GetUserByID(id));
+            return imapper.Map<UserModel>(datamanager.GetUserByID(id));
         }
         public List<HistoryModel> GetHistory(string id)
         {
-            List<HistoryModel> history = new List<HistoryModel>();
-            var items = datamanager.GetHistory(id);
-            foreach (var item in items)
-            {
-                history.Add(new HistoryModel() { Message = item.MessageText, Edited = item.Time });
-            }
-            return history;
+            return imapper.Map<List<HistoryModel>>(datamanager.GetHistory(id));
         }
         public List<UserModel> GetUsersByRoom(string roomname)
         {
-            var users = datamanager.GetUsersByRoom(roomname);
-            List<UserModel> rusers = new List<UserModel>();
-            foreach (var item in users)
-            {
-                rusers.Add(new UserModel(item));
-            }
-            return rusers;
+            return imapper.Map<List<UserModel>>(datamanager.GetUsersByRoom(roomname));
         }
 
         public List<MessageModel> GetMessagesByRoomName(string roomname)
         {
-            List<MessageModel> messages = new List<Models.MessageModel>();
-            var items = datamanager.GetMessagesByRoomName(roomname);
-            foreach (var item in items)
-            {
-                messages.Add(new MessageModel()
-                {
-                    ID = item.ID,
-                    Message = item.MessageText,
-                    RoomName = GetRoomByID(item.RoomID).RoomName,
-                    Time = item.DateTime,
-                    UserName = GetUserByID(item.UserID).UserName
-                });
-            }
-            return messages;
+            return imapper.Map<List<MessageModel>>(datamanager.GetMessagesByRoomName(roomname));
         }
         public MessageModel GetMessageByID(Guid id)
         {
-            var msg = datamanager.GetMessageByID(id);
-            return new MessageModel()
-            {
-                ID = msg.ID,
-                Message = msg.MessageText,
-                RoomName = msg.Room.RoomName,
-                Time = msg.Time,
-                UserName = msg.User.UserName
-            };
+            return imapper.Map<MessageModel>(datamanager.GetMessageByID(id));
         }
         public List<RoomModel> GetRooms(string username)
         {
             var items = datamanager.GetRooms();
-            
             List<RoomModel> jr = GetRoomsByUser(username);
             List<RoomModel> rooms = new List<RoomModel>();
-            
             foreach (var item in items)
             {
-                RoomModel room = new RoomModel()
-                {
-                    RoomID = item.RoomID,
-                    RoomName = item.RoomName,
-                    Users = GetUsersByRoom(item.RoomName)
-                };
+                RoomModel room = imapper.Map<RoomModel>(item);
                 if (!jr.Contains(room))
                     rooms.Add(room);
             }
@@ -138,18 +102,11 @@ namespace BLL
         }
         public RoomModel GetRoomByID(int id)
         {
-            return new RoomModel(datamanager.GetRoomByID(id));
+            return imapper.Map<RoomModel>(datamanager.GetRoomByID(id));
         }
         public List<RoomModel> GetRoomsByUser(string username)
         {
-
-            List<RoomModel> rooms = new List<RoomModel>();
-            var items = datamanager.GetRoomsByUser(username);
-            foreach (var item in items)
-            {
-                rooms.Add(new RoomModel(item));
-            }
-            return rooms;
+            return imapper.Map<List<RoomModel>>(datamanager.GetRoomsByUser(username));
         }
         public string CheckingActivation(string token)
         {

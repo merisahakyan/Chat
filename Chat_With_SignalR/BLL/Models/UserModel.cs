@@ -9,18 +9,6 @@ namespace BLL.Models
 {
     public class UserModel
     {
-        public UserModel()
-        {
-
-        }
-        public UserModel(User user)
-        {
-            UserName = user.UserName;
-            eMail = user.eMail;
-            Password = user.Password;
-            token = user.token;
-            active = user.active;
-        }
         public string ConnectionId { get; set; }
         public string UserName { get; set; }
         public string eMail { get; set; }

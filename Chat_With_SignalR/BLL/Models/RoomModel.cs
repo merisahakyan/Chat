@@ -13,16 +13,6 @@ namespace BLL.Models
         {
             Users = new List<UserModel>();
         }
-        public RoomModel(Room room)
-        {
-            RoomID = room.RoomID;
-            RoomName = room.RoomName;
-            Users = new List<UserModel>();
-            foreach (var item in room.Users)
-            {
-                Users.Add(new UserModel(item));
-            }
-        }
         public int RoomID { get; set; }
         public string RoomName { get; set; }
         public List<UserModel> Users { get; set; }

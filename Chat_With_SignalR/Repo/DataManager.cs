@@ -6,14 +6,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace Repo
 {
-    public class DataManager
+    public class DataManager:IDisposable
     {
-        ChatDataEntities context = new ChatDataEntities();
+        ChatDataEntities context;
+        public DataManager()
+        {
+            context = new ChatDataEntities();
+        }
+
         public void InsertUser(string UserName, string eMail, string Password, string token, bool active)
         {
-            context.InsertIntoUsers(UserName, eMail, Password, token, active);
+            context.InsertIntoUsers(UserName, eMail, Password.GetHashCode().ToString(), token, active);
         }
         public void InsertMessage(Guid guid, string username, string roomname, string message)
         {
@@ -84,6 +91,7 @@ namespace Repo
         public List<Message> GetMessagesByRoomName(string roomname)
         {
             List<Message> messages = new List<Message>();
+            var room = GetRoomByName(roomname);
             int id = GetRoomByName(roomname).RoomID;
             return context.Messages.Select(p => p).Where(p => p.RoomID == id).ToList();
         }
@@ -123,6 +131,11 @@ namespace Repo
             }
             else
                 return "Something went wrong!";
+        }
+
+        public void Dispose()
+        {
+            context.Dispose();
         }
     }
 }

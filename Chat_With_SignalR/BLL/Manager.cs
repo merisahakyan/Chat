@@ -51,7 +51,7 @@ namespace BLL
         }
         public bool Login(string username, string password)
         {
-            return datamanager.Login(username, password);
+            return datamanager.Login(username, password.GetHashCode().ToString());
         }
         public bool RoomContainsUser(string username, string roomname)
         {
@@ -111,6 +111,10 @@ namespace BLL
         public string CheckingActivation(string token)
         {
             return datamanager.CheckingActivation(token);
+        }
+        public void LogOut()
+        {
+            datamanager.Dispose();
         }
     }
 }

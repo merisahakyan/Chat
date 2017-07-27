@@ -61,7 +61,7 @@
             AddMessage(message.ID, message.UserName, message.Message, message.Time)
             $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
 
-            if (name != sessionStorage["username"]) {
+            if (message.UserName != sessionStorage["username"]) {
                 var options = {
                     title: sessionStorage["roomname"],
                     options: {
@@ -81,7 +81,8 @@
                 lang: 'en-US',
             }
         };
-        $("#easyNotify").easyNotify(options);
+        if (name != sessionStorage["username"])
+            $("#easyNotify").easyNotify(options);
     }
     chat.client.showAllMessages = function (roomname, messages) {
 
@@ -99,7 +100,8 @@
     };
     chat.client.onEditingMsg = function (id, newmsg) {
         $("#m" + id).empty();
-        $("#m" + id).append(newmsg)
+        $("#m" + id).append(newmsg);
+        $("#datetime" + id).append(' edited');
     }
     chat.client.onConnected = function (id, userName, allUsers, joinedrooms, rooms) {
         $("username").val(userName);
@@ -473,7 +475,7 @@
 
     function AddMessage(id, username, message, time) {
         $('#chatroom').append('</br><p id="' + id + '"><b>' + username + '</b >: ' + '<span id="m' + id + '">' + message + '</span>  </p>');
-        $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time.substr(0, 10)+' '+time.substr(11,5) + '</span>');
+        $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time.substr(0, 10) + ' ' + time.substr(11, 5) + '</span>');
         var flag = true;
         if (username == sessionStorage["username"]) {
 
@@ -494,13 +496,15 @@
                        val: $("#m" + id).text(),
                        keypress: function (e) {
                            if (e.which == 13) {
-                               flag = true;
-                               $("#edit" + id).show();
-                               $("#m" + id).show();
-                               var msg = $("#foredit" + id).val();
-                               $("#foredit" + id).remove();
-                               $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time.substr(0, 10) + ' ' + time.substr(11, 5) + '</span>');
-                               chat.server.editMessage(id, msg);
+                               if ($("#foredit" + id).val() != '') {
+                                   flag = true;
+                                   $("#edit" + id).show();
+                                   $("#m" + id).show();
+                                   var msg = $("#foredit" + id).val();
+                                   $("#foredit" + id).remove();
+                                   $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time.substr(0, 10) + ' ' + time.substr(11, 5) + '</span>');
+                                   chat.server.editMessage(id, msg);
+                               }
                            }
                        }
                    })

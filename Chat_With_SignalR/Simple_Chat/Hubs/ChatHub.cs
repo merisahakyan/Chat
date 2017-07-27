@@ -186,6 +186,7 @@
             ActiveUsers.Remove(ActiveUsers.FirstOrDefault(p => p.UserName == username));
             Clients.Caller.onLogOut();
             Clients.All.onUserDisconnected(username);
+            manager.LogOut();
         }
     }
 }

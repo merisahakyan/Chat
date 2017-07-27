@@ -15,14 +15,16 @@
         <input type="hidden" id="username" value="@ViewData["username"]" />
         <div id="chatBody">
             <div id="main_div">
-                <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:400px; overflow:auto"></div>
+                <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:460px; overflow:auto; overflow-y:auto;word-wrap: break-word"></div>
+                <div id="history" style="position:absolute;left:1050px;top:0px; width:300px;height:500px; overflow:auto; overflow-y:auto;background-color:aliceblue;word-wrap: break-word">
 
+                </div>
                 <div id="inputForm">
                     <input type="text" id="groupmessage" style="position:absolute; width:700px;height:40px;left:250px;top:460px" />
                     <input type="button" id="sendgroupmessage" value="send" style="position:absolute; width:100px;height:40px;left:950px;top:460px" />
                 </div>
             </div>
-            <div style="background-color:antiquewhite; position:absolute;width:250px;height:500px; left:0px;top:0px;overflow:auto">
+            <div style="background-color:aliceblue; position:absolute;width:250px;height:500px; left:0px;top:0px;overflow:auto">
                 <div id="members">
                     <div id="header">
                         

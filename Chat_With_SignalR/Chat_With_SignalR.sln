@@ -5,9 +5,9 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatWithSignalR", "Simple_Chat\ChatWithSignalR.csproj", "{75AF531D-A87B-43B2-B298-4B4620DE01E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repo", "Repo\Repo.csproj", "{A06B5759-2455-4AE1-AD44-ED7C7CFFB023}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatWithSignalR.Repo", "Repo\ChatWithSignalR.Repo.csproj", "{A06B5759-2455-4AE1-AD44-ED7C7CFFB023}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{F9DDD1FE-206C-468D-8731-0CDF5A061777}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatWithSignalR.BLL", "BLL\ChatWithSignalR.BLL.csproj", "{F9DDD1FE-206C-468D-8731-0CDF5A061777}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

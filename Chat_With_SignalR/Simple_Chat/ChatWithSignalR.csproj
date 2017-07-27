@@ -277,9 +277,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BLL\BLL.csproj">
+    <ProjectReference Include="..\BLL\ChatWithSignalR.BLL.csproj">
       <Project>{f9ddd1fe-206c-468d-8731-0cdf5a061777}</Project>
-      <Name>BLL</Name>
+      <Name>ChatWithSignalR.BLL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

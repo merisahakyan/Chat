@@ -34,121 +34,6 @@ namespace Repo
         public virtual DbSet<OldMessage> OldMessages { get; set; }
         public virtual DbSet<UsersRoom> UsersRooms { get; set; }
     
-        public virtual int EditMessage(Nullable<System.Guid> id, string newmessage, Nullable<System.DateTime> time)
-        {
-            var idParameter = id.HasValue ?
-                new ObjectParameter("id", id) :
-                new ObjectParameter("id", typeof(System.Guid));
-    
-            var newmessageParameter = newmessage != null ?
-                new ObjectParameter("newmessage", newmessage) :
-                new ObjectParameter("newmessage", typeof(string));
-    
-            var timeParameter = time.HasValue ?
-                new ObjectParameter("time", time) :
-                new ObjectParameter("time", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("EditMessage", idParameter, newmessageParameter, timeParameter);
-        }
-    
-        public virtual int InsertIntoMessages(Nullable<System.Guid> id, string username, string roomname, string text, Nullable<System.DateTime> time)
-        {
-            var idParameter = id.HasValue ?
-                new ObjectParameter("id", id) :
-                new ObjectParameter("id", typeof(System.Guid));
-    
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
-    
-            var roomnameParameter = roomname != null ?
-                new ObjectParameter("roomname", roomname) :
-                new ObjectParameter("roomname", typeof(string));
-    
-            var textParameter = text != null ?
-                new ObjectParameter("text", text) :
-                new ObjectParameter("text", typeof(string));
-    
-            var timeParameter = time.HasValue ?
-                new ObjectParameter("time", time) :
-                new ObjectParameter("time", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertIntoMessages", idParameter, usernameParameter, roomnameParameter, textParameter, timeParameter);
-        }
-    
-        public virtual int InsertIntoRooms(string roomname)
-        {
-            var roomnameParameter = roomname != null ?
-                new ObjectParameter("roomname", roomname) :
-                new ObjectParameter("roomname", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertIntoRooms", roomnameParameter);
-        }
-    
-        public virtual int InsertIntoUsers(string username, string email, string password, string token, Nullable<bool> active)
-        {
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
-    
-            var emailParameter = email != null ?
-                new ObjectParameter("email", email) :
-                new ObjectParameter("email", typeof(string));
-    
-            var passwordParameter = password != null ?
-                new ObjectParameter("password", password) :
-                new ObjectParameter("password", typeof(string));
-    
-            var tokenParameter = token != null ?
-                new ObjectParameter("token", token) :
-                new ObjectParameter("token", typeof(string));
-    
-            var activeParameter = active.HasValue ?
-                new ObjectParameter("active", active) :
-                new ObjectParameter("active", typeof(bool));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertIntoUsers", usernameParameter, emailParameter, passwordParameter, tokenParameter, activeParameter);
-        }
-    
-        public virtual int InsertRoomUser(Nullable<int> roomid, Nullable<int> userid)
-        {
-            var roomidParameter = roomid.HasValue ?
-                new ObjectParameter("roomid", roomid) :
-                new ObjectParameter("roomid", typeof(int));
-    
-            var useridParameter = userid.HasValue ?
-                new ObjectParameter("userid", userid) :
-                new ObjectParameter("userid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertRoomUser", roomidParameter, useridParameter);
-        }
-    
-        public virtual int JoinGroup(string username, string roomname)
-        {
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
-    
-            var roomnameParameter = roomname != null ?
-                new ObjectParameter("roomname", roomname) :
-                new ObjectParameter("roomname", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("JoinGroup", usernameParameter, roomnameParameter);
-        }
-    
-        public virtual int OutFromRoom(string username, string roomname)
-        {
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
-    
-            var roomnameParameter = roomname != null ?
-                new ObjectParameter("roomname", roomname) :
-                new ObjectParameter("roomname", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("OutFromRoom", usernameParameter, roomnameParameter);
-        }
-    
         public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
         {
             var diagramnameParameter = diagramname != null ?
@@ -204,6 +89,23 @@ namespace Repo
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_dropdiagram", diagramnameParameter, owner_idParameter);
         }
     
+        public virtual int sp_EditMessage(Nullable<System.Guid> id, string newmessage, Nullable<System.DateTime> time)
+        {
+            var idParameter = id.HasValue ?
+                new ObjectParameter("id", id) :
+                new ObjectParameter("id", typeof(System.Guid));
+    
+            var newmessageParameter = newmessage != null ?
+                new ObjectParameter("newmessage", newmessage) :
+                new ObjectParameter("newmessage", typeof(string));
+    
+            var timeParameter = time.HasValue ?
+                new ObjectParameter("time", time) :
+                new ObjectParameter("time", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_EditMessage", idParameter, newmessageParameter, timeParameter);
+        }
+    
         public virtual ObjectResult<sp_helpdiagramdefinition_Result> sp_helpdiagramdefinition(string diagramname, Nullable<int> owner_id)
         {
             var diagramnameParameter = diagramname != null ?
@@ -228,6 +130,104 @@ namespace Repo
                 new ObjectParameter("owner_id", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_helpdiagrams_Result>("sp_helpdiagrams", diagramnameParameter, owner_idParameter);
+        }
+    
+        public virtual int sp_InsertIntoMessages(Nullable<System.Guid> id, string username, string roomname, string text, Nullable<System.DateTime> time)
+        {
+            var idParameter = id.HasValue ?
+                new ObjectParameter("id", id) :
+                new ObjectParameter("id", typeof(System.Guid));
+    
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var roomnameParameter = roomname != null ?
+                new ObjectParameter("roomname", roomname) :
+                new ObjectParameter("roomname", typeof(string));
+    
+            var textParameter = text != null ?
+                new ObjectParameter("text", text) :
+                new ObjectParameter("text", typeof(string));
+    
+            var timeParameter = time.HasValue ?
+                new ObjectParameter("time", time) :
+                new ObjectParameter("time", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_InsertIntoMessages", idParameter, usernameParameter, roomnameParameter, textParameter, timeParameter);
+        }
+    
+        public virtual int sp_InsertIntoRooms(string roomname)
+        {
+            var roomnameParameter = roomname != null ?
+                new ObjectParameter("roomname", roomname) :
+                new ObjectParameter("roomname", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_InsertIntoRooms", roomnameParameter);
+        }
+    
+        public virtual int sp_InsertIntoUsers(string username, string email, string password, string token, Nullable<bool> active)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var emailParameter = email != null ?
+                new ObjectParameter("email", email) :
+                new ObjectParameter("email", typeof(string));
+    
+            var passwordParameter = password != null ?
+                new ObjectParameter("password", password) :
+                new ObjectParameter("password", typeof(string));
+    
+            var tokenParameter = token != null ?
+                new ObjectParameter("token", token) :
+                new ObjectParameter("token", typeof(string));
+    
+            var activeParameter = active.HasValue ?
+                new ObjectParameter("active", active) :
+                new ObjectParameter("active", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_InsertIntoUsers", usernameParameter, emailParameter, passwordParameter, tokenParameter, activeParameter);
+        }
+    
+        public virtual int sp_InsertRoomUser(Nullable<int> roomid, Nullable<int> userid)
+        {
+            var roomidParameter = roomid.HasValue ?
+                new ObjectParameter("roomid", roomid) :
+                new ObjectParameter("roomid", typeof(int));
+    
+            var useridParameter = userid.HasValue ?
+                new ObjectParameter("userid", userid) :
+                new ObjectParameter("userid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_InsertRoomUser", roomidParameter, useridParameter);
+        }
+    
+        public virtual int sp_JoinGroup(string username, string roomname)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var roomnameParameter = roomname != null ?
+                new ObjectParameter("roomname", roomname) :
+                new ObjectParameter("roomname", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_JoinGroup", usernameParameter, roomnameParameter);
+        }
+    
+        public virtual int sp_OutFromRoom(string username, string roomname)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var roomnameParameter = roomname != null ?
+                new ObjectParameter("roomname", roomname) :
+                new ObjectParameter("roomname", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_OutFromRoom", usernameParameter, roomnameParameter);
         }
     
         public virtual int sp_renamediagram(string diagramname, Nullable<int> owner_id, string new_diagramname)

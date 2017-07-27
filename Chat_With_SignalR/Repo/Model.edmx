@@ -125,56 +125,22 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="EditMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
-          <Parameter Name="newmessage" Type="varchar(max)" Mode="In" />
-          <Parameter Name="time" Type="datetime" Mode="In" />
+        <Function Name="f_IsValidNameOrEmail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="email" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="f_IsValidRoomName" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+          <Parameter Name="roomname" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="f_Login" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="password" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="f_RoomContainsUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="roomname" Type="varchar" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
-        <Function Name="InsertIntoMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
-          <Parameter Name="username" Type="varchar" Mode="In" />
-          <Parameter Name="roomname" Type="varchar" Mode="In" />
-          <Parameter Name="text" Type="varchar" Mode="In" />
-          <Parameter Name="time" Type="datetime" Mode="In" />
-        </Function>
-        <Function Name="InsertIntoRooms" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="roomname" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="InsertIntoUsers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="username" Type="varchar" Mode="In" />
-          <Parameter Name="email" Type="varchar" Mode="In" />
-          <Parameter Name="password" Type="varchar" Mode="In" />
-          <Parameter Name="token" Type="varchar(max)" Mode="In" />
-          <Parameter Name="active" Type="bit" Mode="In" />
-        </Function>
-        <Function Name="InsertRoomUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="roomid" Type="int" Mode="In" />
-          <Parameter Name="userid" Type="int" Mode="In" />
-        </Function>
-        <Function Name="IsValidNameOrEmail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
-          <Parameter Name="username" Type="varchar" Mode="In" />
-          <Parameter Name="email" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="IsValidRoomName" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
-          <Parameter Name="roomname" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="JoinGroup" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="username" Type="varchar" Mode="In" />
-          <Parameter Name="roomname" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="Login" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
-          <Parameter Name="username" Type="varchar" Mode="In" />
-          <Parameter Name="password" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="OutFromRoom" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="username" Type="varchar" Mode="In" />
-          <Parameter Name="roomname" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="RoomContainsUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
-          <Parameter Name="username" Type="varchar" Mode="In" />
-          <Parameter Name="roomname" Type="varchar" Mode="In" />
-        </Function>
         <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -191,6 +157,11 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="sp_EditMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="newmessage" Type="varchar(max)" Mode="In" />
+          <Parameter Name="time" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -198,6 +169,35 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
         <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_InsertIntoMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="roomname" Type="varchar" Mode="In" />
+          <Parameter Name="text" Type="varchar" Mode="In" />
+          <Parameter Name="time" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="sp_InsertIntoRooms" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="roomname" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sp_InsertIntoUsers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="email" Type="varchar" Mode="In" />
+          <Parameter Name="password" Type="varchar" Mode="In" />
+          <Parameter Name="token" Type="varchar(max)" Mode="In" />
+          <Parameter Name="active" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="sp_InsertRoomUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="roomid" Type="int" Mode="In" />
+          <Parameter Name="userid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_JoinGroup" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="roomname" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sp_OutFromRoom" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="roomname" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
@@ -359,40 +359,6 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             <End Role="Rooms" EntitySet="Rooms" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
-          <FunctionImport Name="EditMessage">
-            <Parameter Name="id" Mode="In" Type="Guid" />
-            <Parameter Name="newmessage" Mode="In" Type="String" />
-            <Parameter Name="time" Mode="In" Type="DateTime" />
-          </FunctionImport>
-          <FunctionImport Name="InsertIntoMessages">
-            <Parameter Name="id" Mode="In" Type="Guid" />
-            <Parameter Name="username" Mode="In" Type="String" />
-            <Parameter Name="roomname" Mode="In" Type="String" />
-            <Parameter Name="text" Mode="In" Type="String" />
-            <Parameter Name="time" Mode="In" Type="DateTime" />
-          </FunctionImport>
-          <FunctionImport Name="InsertIntoRooms">
-            <Parameter Name="roomname" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="InsertIntoUsers">
-            <Parameter Name="username" Mode="In" Type="String" />
-            <Parameter Name="email" Mode="In" Type="String" />
-            <Parameter Name="password" Mode="In" Type="String" />
-            <Parameter Name="token" Mode="In" Type="String" />
-            <Parameter Name="active" Mode="In" Type="Boolean" />
-          </FunctionImport>
-          <FunctionImport Name="InsertRoomUser">
-            <Parameter Name="roomid" Mode="In" Type="Int32" />
-            <Parameter Name="userid" Mode="In" Type="Int32" />
-          </FunctionImport>
-          <FunctionImport Name="JoinGroup">
-            <Parameter Name="username" Mode="In" Type="String" />
-            <Parameter Name="roomname" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="OutFromRoom">
-            <Parameter Name="username" Mode="In" Type="String" />
-            <Parameter Name="roomname" Mode="In" Type="String" />
-          </FunctionImport>
           <FunctionImport Name="sp_alterdiagram">
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
@@ -409,6 +375,11 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="sp_EditMessage">
+            <Parameter Name="id" Mode="In" Type="Guid" />
+            <Parameter Name="newmessage" Mode="In" Type="String" />
+            <Parameter Name="time" Mode="In" Type="DateTime" />
+          </FunctionImport>
           <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(ChatDataModel.sp_helpdiagramdefinition_Result)">
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
@@ -416,6 +387,35 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
           <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(ChatDataModel.sp_helpdiagrams_Result)">
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_InsertIntoMessages">
+            <Parameter Name="id" Mode="In" Type="Guid" />
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="roomname" Mode="In" Type="String" />
+            <Parameter Name="text" Mode="In" Type="String" />
+            <Parameter Name="time" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="sp_InsertIntoRooms">
+            <Parameter Name="roomname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_InsertIntoUsers">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="email" Mode="In" Type="String" />
+            <Parameter Name="password" Mode="In" Type="String" />
+            <Parameter Name="token" Mode="In" Type="String" />
+            <Parameter Name="active" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="sp_InsertRoomUser">
+            <Parameter Name="roomid" Mode="In" Type="Int32" />
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_JoinGroup">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="roomname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_OutFromRoom">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="roomname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_renamediagram">
             <Parameter Name="diagramname" Mode="In" Type="String" />
@@ -510,16 +510,10 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
               <ScalarProperty Name="UserID" ColumnName="UserID" />
             </EndProperty>
           </AssociationSetMapping>
-          <FunctionImportMapping FunctionImportName="EditMessage" FunctionName="ChatDataModel.Store.EditMessage" />
-          <FunctionImportMapping FunctionImportName="InsertIntoMessages" FunctionName="ChatDataModel.Store.InsertIntoMessages" />
-          <FunctionImportMapping FunctionImportName="InsertIntoRooms" FunctionName="ChatDataModel.Store.InsertIntoRooms" />
-          <FunctionImportMapping FunctionImportName="InsertIntoUsers" FunctionName="ChatDataModel.Store.InsertIntoUsers" />
-          <FunctionImportMapping FunctionImportName="InsertRoomUser" FunctionName="ChatDataModel.Store.InsertRoomUser" />
-          <FunctionImportMapping FunctionImportName="JoinGroup" FunctionName="ChatDataModel.Store.JoinGroup" />
-          <FunctionImportMapping FunctionImportName="OutFromRoom" FunctionName="ChatDataModel.Store.OutFromRoom" />
           <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="ChatDataModel.Store.sp_alterdiagram" />
           <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="ChatDataModel.Store.sp_creatediagram" />
           <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="ChatDataModel.Store.sp_dropdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_EditMessage" FunctionName="ChatDataModel.Store.sp_EditMessage" />
           <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="ChatDataModel.Store.sp_helpdiagramdefinition">
             <ResultMapping>
               <ComplexTypeMapping TypeName="ChatDataModel.sp_helpdiagramdefinition_Result">
@@ -539,6 +533,12 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_InsertIntoMessages" FunctionName="ChatDataModel.Store.sp_InsertIntoMessages" />
+          <FunctionImportMapping FunctionImportName="sp_InsertIntoRooms" FunctionName="ChatDataModel.Store.sp_InsertIntoRooms" />
+          <FunctionImportMapping FunctionImportName="sp_InsertIntoUsers" FunctionName="ChatDataModel.Store.sp_InsertIntoUsers" />
+          <FunctionImportMapping FunctionImportName="sp_InsertRoomUser" FunctionName="ChatDataModel.Store.sp_InsertRoomUser" />
+          <FunctionImportMapping FunctionImportName="sp_JoinGroup" FunctionName="ChatDataModel.Store.sp_JoinGroup" />
+          <FunctionImportMapping FunctionImportName="sp_OutFromRoom" FunctionName="ChatDataModel.Store.sp_OutFromRoom" />
           <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="ChatDataModel.Store.sp_renamediagram" />
           <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="ChatDataModel.Store.sp_upgraddiagrams" />
         </EntityContainerMapping>

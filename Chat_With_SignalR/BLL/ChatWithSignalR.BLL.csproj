@@ -53,9 +53,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Repo\Repo.csproj">
+    <ProjectReference Include="..\Repo\ChatWithSignalR.Repo.csproj">
       <Project>{a06b5759-2455-4ae1-ad44-ed7c7cffb023}</Project>
-      <Name>Repo</Name>
+      <Name>ChatWithSignalR.Repo</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

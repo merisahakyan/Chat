@@ -20,57 +20,57 @@ namespace Repo
 
         public void InsertUser(string UserName, string eMail, string Password, string token, bool active)
         {
-            context.InsertIntoUsers(UserName, eMail, Password.GetHashCode().ToString(), token, active);
+            context.sp_InsertIntoUsers(UserName, eMail, Password.GetHashCode().ToString(), token, active);
         }
         public void InsertMessage(Guid guid, string username, string roomname, string message)
         {
-            context.InsertIntoMessages(guid, username, roomname, message, DateTime.Now);
+            context.sp_InsertIntoMessages(guid, username, roomname, message, DateTime.Now);
         }
         public void EditMessage(Guid id, string newmessage)
         {
-            context.EditMessage(id, newmessage, DateTime.Now);
+            context.sp_EditMessage(id, newmessage, DateTime.Now);
         }
 
         public void InsertRoom(string roomname)
         {
-            context.InsertIntoRooms(roomname);
+            context.sp_InsertIntoRooms(roomname);
         }
         public bool IsValidNameOrEmail(string username, string email)
         {
-            return context.Database.SqlQuery<bool>("select dbo.IsValidNameOrEmail('" + username + "','" + email + "')").FirstOrDefault();
+            return context.Database.SqlQuery<bool>("select dbo.f_IsValidNameOrEmail('" + username + "','" + email + "')").FirstOrDefault();
         }
         public void OutFromRoom(string username, string roomname)
         {
-            context.OutFromRoom(username, roomname);
+            context.sp_OutFromRoom(username, roomname);
         }
         public void JoinGroup(string username, string roomname)
         {
-            context.JoinGroup(username, roomname);
+            context.sp_JoinGroup(username, roomname);
         }
         public bool IsValidRoomName(string roomname)
         {
-            return context.Database.SqlQuery<bool>("select dbo.IsValidRoomName('" + roomname + "')").FirstOrDefault();
+            return context.Database.SqlQuery<bool>("select dbo.f_IsValidRoomName('" + roomname + "')").FirstOrDefault();
         }
         public bool Login(string username, string password)
         {
-            return context.Database.SqlQuery<bool>("select dbo.Login('" + username + "','" + password + "')").FirstOrDefault();
+            return context.Database.SqlQuery<bool>("select dbo.f_Login('" + username + "','" + password + "')").FirstOrDefault();
         }
         public bool RoomContainsUser(string username, string roomname)
         {
-            return context.Database.SqlQuery<bool>("select dbo.RoomContainsUser('" + username + "','" + roomname + "')").FirstOrDefault();
+            return context.Database.SqlQuery<bool>("select dbo.f_RoomContainsUser('" + username + "','" + roomname + "')").FirstOrDefault();
         }
         public User GetUserByName(string username)
         {
-            return context.Database.SqlQuery<User>("select * from Users where UserName='" + username + "'").FirstOrDefault();
+            return context.Users.FirstOrDefault(p => p.UserName == username);
         }
         public Room GetRoomByName(string roomname)
         {
-            return context.Database.SqlQuery<Room>("select * from Rooms where RoomName='" + roomname + "'").FirstOrDefault();
+            return context.Rooms.FirstOrDefault(p => p.RoomName == roomname);
         }
 
         public User GetUserByID(int id)
         {
-            return context.Database.SqlQuery<User>("select * from Users where UserID=" + id).FirstOrDefault();
+            return context.Users.FirstOrDefault(p => p.UserID == id);
         }
         public List<OldMessage> GetHistory(string id)
         {
@@ -105,7 +105,7 @@ namespace Repo
         }
         public Room GetRoomByID(int id)
         {
-            return context.Database.SqlQuery<Room>("select * from Rooms where RoomID=" + id).FirstOrDefault();
+            return context.Rooms.FirstOrDefault(p => p.RoomID == id);
         }
         public List<Room> GetRoomsByUser(string username)
         {

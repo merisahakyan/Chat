@@ -277,9 +277,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Repo\Repo.csproj">
-      <Project>{a06b5759-2455-4ae1-ad44-ed7c7cffb023}</Project>
-      <Name>Repo</Name>
+    <ProjectReference Include="..\BLL\BLL.csproj">
+      <Project>{f9ddd1fe-206c-468d-8731-0cdf5a061777}</Project>
+      <Name>BLL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

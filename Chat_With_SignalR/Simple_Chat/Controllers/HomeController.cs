@@ -1,4 +1,5 @@
-﻿using Repo;
+﻿
+using BLL;
 using System;
 using System.Linq;
 using System.Web.Mvc;
@@ -7,7 +8,7 @@ namespace Simple_Chat.Controllers
 {
     public class HomeController : Controller
     {
-        DataManager manager = new DataManager();
+        Manager manager = new Manager();
         public ActionResult Index()
         {
             return View();

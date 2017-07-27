@@ -70,10 +70,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Model.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\HistoryModel.cs" />
-    <Compile Include="Models\MessageModel.cs" />
-    <Compile Include="Models\RoomModel.cs" />
-    <Compile Include="Models\UserModel.cs" />
     <Compile Include="OldMessage.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>

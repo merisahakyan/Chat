@@ -209,8 +209,8 @@
             $("#history").append(b);
         }
         for (var i = 0; i < history.length; i++) {
-            $("#history").append('</br><div>' + history[i].Message + '</br ><span style="font-size:60%">' + history[i].Edited + '</span></div>');
-            
+            $("#history").append('</br><div>' + history[i].Message + '</br ><span style="font-size:60%">' + history[i].Edited.substr(0, 10) + ' ' + history[i].Edited.substr(11, 5) + '</span></div>');
+
         }
     }
 
@@ -404,31 +404,31 @@
     });
 
     function AddGroup(roomname) {
+        if (roomname != 'general') {
+            var name = roomname;
+            if (name.length > 17)
+                name = roomname.substr(0, 17) + '...';
+            $("#rooms").append('<p id="' + roomname + '" title="' + roomname + '">' + name + '</p>');
 
-        var name = roomname;
-        if (name.length > 17)
-            name = roomname.substr(0, 17) + '...';
-        $("#rooms").append('<p id="' + roomname + '" title="' + roomname + '">' + name + '</p>');
+            $("#" + roomname).mouseenter(function () {
+                var b = $('<button>',
+            {
+                text: 'Join',
+                id: 'join' + roomname,
+                click: function () {
+                    sessionStorage["roomname"] = roomname;
+                    window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"] + '&username=' + sessionStorage["username"];
+                    chat.server.disconnect('join', sessionStorage["roomname"]);
+                }
+            });
+                b.css('float', 'right');
+                $("#" + roomname).append(b);
+            });
+            $("#" + roomname).mouseleave(function () {
+                $("#join" + roomname).remove();
 
-        $("#" + roomname).mouseenter(function () {
-            var b = $('<button>',
-        {
-            text: 'Join',
-            id: 'join' + roomname,
-            click: function () {
-                sessionStorage["roomname"] = roomname;
-                window.location.href = 'http://localhost:48088/Home/Room?roomname=' + sessionStorage["roomname"] + '&username=' + sessionStorage["username"];
-                chat.server.disconnect('join', sessionStorage["roomname"]);
-            }
-        });
-            b.css('float', 'right');
-            $("#" + roomname).append(b);
-        });
-        $("#" + roomname).mouseleave(function () {
-            $("#join" + roomname).remove();
-
-        });
-
+            });
+        }
     }
     function AddJoinedGroup(roomname) {
 
@@ -473,7 +473,7 @@
 
     function AddMessage(id, username, message, time) {
         $('#chatroom').append('</br><p id="' + id + '"><b>' + username + '</b >: ' + '<span id="m' + id + '">' + message + '</span>  </p>');
-        $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time + '</span>');
+        $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time.substr(0, 10)+' '+time.substr(11,5) + '</span>');
         var flag = true;
         if (username == sessionStorage["username"]) {
 
@@ -491,7 +491,7 @@
                    $("#history").empty();
                    var edit = $('<input>', {
                        id: 'foredit' + id,
-                       val: $("#m"+id).text(),
+                       val: $("#m" + id).text(),
                        keypress: function (e) {
                            if (e.which == 13) {
                                flag = true;
@@ -499,12 +499,12 @@
                                $("#m" + id).show();
                                var msg = $("#foredit" + id).val();
                                $("#foredit" + id).remove();
-                               $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time + '</span>');
+                               $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time.substr(0, 10) + ' ' + time.substr(11, 5) + '</span>');
                                chat.server.editMessage(id, msg);
                            }
                        }
                    })
-                   
+
                    $("#" + id).append(edit);
                }
            });

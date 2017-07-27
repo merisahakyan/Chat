@@ -3,10 +3,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.AspNet.SignalR;
-
     using System;
     using Providers;
-    using Repo.Models;
+    using BLL;
+    using BLL.Models;
 
     public class ChatHub : Hub
     {
@@ -14,7 +14,7 @@
         static string uname;
         static bool login = false;
         static string condition = "";
-        Repo.DataManager manager = new Repo.DataManager();
+        Manager manager = new Manager();
 
         public void Starting(string username, string roomname)
         {
@@ -90,7 +90,7 @@
             }
             Clients.Clients(notify).desktopNot(roomname, username, message);
         }
-        public void EditMessage(string id,string newmessage)
+        public void EditMessage(string id, string newmessage)
         {
             manager.EditMessage(Guid.Parse(id), newmessage);
             Clients.All.onEditingMsg(id, newmessage);

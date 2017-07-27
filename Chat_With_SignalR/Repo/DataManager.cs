@@ -1,5 +1,4 @@
-﻿using Repo.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,11 +17,11 @@ namespace Repo
         }
         public void InsertMessage(Guid guid, string username, string roomname, string message)
         {
-            context.InsertIntoMessages(guid, username, roomname, message,DateTime.Now);
+            context.InsertIntoMessages(guid, username, roomname, message, DateTime.Now);
         }
         public void EditMessage(Guid id, string newmessage)
         {
-            context.EditMessage(id, newmessage,DateTime.Now);
+            context.EditMessage(id, newmessage, DateTime.Now);
         }
 
         public void InsertRoom(string roomname)
@@ -53,167 +52,61 @@ namespace Repo
         {
             return context.Database.SqlQuery<bool>("select dbo.RoomContainsUser('" + username + "','" + roomname + "')").FirstOrDefault();
         }
-        public UserModel GetUserByName(string username)
+        public User GetUserByName(string username)
         {
-            return context.Database.SqlQuery<UserModel>("select * from Users where UserName='" + username + "'").FirstOrDefault();
+            return context.Database.SqlQuery<User>("select * from Users where UserName='" + username + "'").FirstOrDefault();
         }
-        public RoomModel GetRoomByName(string roomname)
+        public Room GetRoomByName(string roomname)
         {
-            return context.Database.SqlQuery<RoomModel>("select * from Rooms where RoomName='" + roomname + "'").FirstOrDefault();
+            return context.Database.SqlQuery<Room>("select * from Rooms where RoomName='" + roomname + "'").FirstOrDefault();
         }
 
-        public UserModel GetUserByID(int id)
+        public User GetUserByID(int id)
         {
-            return context.Database.SqlQuery<UserModel>("select * from Users where UserID=" + id).FirstOrDefault();
+            return context.Database.SqlQuery<User>("select * from Users where UserID=" + id).FirstOrDefault();
         }
-        public List<HistoryModel> GetHistory(string id)
+        public List<OldMessage> GetHistory(string id)
         {
-            List<HistoryModel> history = new List<HistoryModel>();
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select * from OldMessages where ID='" + id.ToString().ToUpper() + "'", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            HistoryModel model = new HistoryModel();
-                            model.Message = r["MessageText"].ToString();
-                            model.Edited = (DateTime)r["Time"];
-                            history.Add(model);
-                        }
-                    }
-                }
-            }
-            return history;
+            return context.OldMessages.Select(p => p).Where(p => p.ID.ToString() == id).ToList();
         }
-        public List<UserModel> GetUsersByRoom(string roomname)
+        public List<User> GetUsersByRoom(string roomname)
         {
-            List<UserModel> users = new List<UserModel>();
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
+            List<User> users = new List<User>();
+            int id = GetRoomByName(roomname).RoomID;
+            var items = context.UsersRooms.Select(p => p).Where(p => p.RoomID == id).ToList();
+            foreach (var item in items)
             {
-                using (SqlCommand cmd = new SqlCommand("select * from UsersRooms where RoomID=" + GetRoomByName(roomname).RoomID + "", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            users.Add(GetUserByID((int)r["UserID"]));
-                        }
-                    }
-                }
+                users.Add(GetUserByID(item.UserID));
             }
             return users;
         }
 
-        public List<MessageModel> GetMessagesByRoomName(string roomname)
+        public List<Message> GetMessagesByRoomName(string roomname)
         {
-            List<MessageModel> messages = new List<Models.MessageModel>();
+            List<Message> messages = new List<Message>();
             int id = GetRoomByName(roomname).RoomID;
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select * from Messages where RoomID=" + id, conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            MessageModel msg = new MessageModel();
-                            msg.RoomName = roomname;
-                            msg.UserName = GetUserByID((int)r["UserID"]).UserName;
-                            msg.Message = r["MessageText"].ToString();
-                            msg.ID = (Guid)r["ID"];
-                            msg.Time = (DateTime)r["DateTime"];
-                            messages.Add(msg);
-                        }
-                    }
-                }
-            }
-            return messages;
+            return context.Messages.Select(p => p).Where(p => p.RoomID == id).ToList();
         }
-        public MessageModel GetMessageByID(Guid id)
+        public Message GetMessageByID(Guid id)
         {
-            MessageModel msg = new MessageModel();
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select * from [Messages] where ID='" + id.ToString().ToUpper() + "'", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        r.Read();
-                        msg.RoomName = GetRoomByID((int)r["RoomID"]).RoomName;
-                        msg.UserName = GetUserByID((int)r["UserID"]).UserName;
-                        msg.Message = r["MessageText"].ToString();
-                        msg.ID = (Guid)r["ID"];
-                        msg.Time = (DateTime)r["DateTime"];
-                    }
-                }
-            }
-            return msg;
+            return context.Messages.FirstOrDefault(p => p.ID == id);
         }
-        public List<RoomModel> GetRooms(string username)
+        public List<Room> GetRooms()
         {
-
-            List<RoomModel> rooms = new List<RoomModel>();
-            List<RoomModel> jr = GetRoomsByUser(username);
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand(@"select * from Rooms", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            RoomModel room = new RoomModel();
-                            room.RoomName = r["RoomName"].ToString();
-                            room.RoomID = (int)r["RoomID"];
-                            room.Users = GetUsersByRoom(r["RoomName"].ToString());
-                            if (!jr.Contains(room))
-                                rooms.Add(room);
-                        }
-                    }
-                }
-            }
-            return rooms;
+            return context.Rooms.ToList();
         }
-        public RoomModel GetRoomByID(int id)
+        public Room GetRoomByID(int id)
         {
-            return context.Database.SqlQuery<RoomModel>("select * from Rooms where RoomID=" + id).FirstOrDefault();
+            return context.Database.SqlQuery<Room>("select * from Rooms where RoomID=" + id).FirstOrDefault();
         }
-        public List<RoomModel> GetRoomsByUser(string username)
+        public List<Room> GetRoomsByUser(string username)
         {
-            int id;
-            List<RoomModel> rooms = new List<Models.RoomModel>();
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
+            List<Room> rooms = new List<Room>();
+            int id = context.Users.Where(p => p.UserName == username).Select(p => p.UserID).FirstOrDefault();
+            var items = context.UsersRooms.Select(p => p).Where(p => p.UserID == id);
+            foreach (var item in items)
             {
-                using (SqlCommand cmd = new SqlCommand(@"select * from Users where UserName='" + username + "'", conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        r.Read();
-                        id = (int)r["UserID"];
-                    }
-                }
-            }
-            using (SqlConnection conn = new SqlConnection("data source=F4FS-01132;initial catalog=ChatData;integrated security=True"))
-            {
-                using (SqlCommand cmd = new SqlCommand(@"select * from UsersRooms where UserID=" + id, conn))
-                {
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            rooms.Add(GetRoomByID((int)r["RoomID"]));
-                        }
-                    }
-                }
+                rooms.Add(GetRoomByID(item.RoomID));
             }
             return rooms;
 

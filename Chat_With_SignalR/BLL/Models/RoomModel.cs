@@ -1,16 +1,27 @@
-﻿using System;
+﻿using Repo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repo.Models
+namespace BLL.Models
 {
-    public class RoomModel:IEquatable<RoomModel>
+    public class RoomModel : IEquatable<RoomModel>
     {
         public RoomModel()
         {
-            Users=new List<UserModel>();
+            Users = new List<UserModel>();
+        }
+        public RoomModel(Room room)
+        {
+            RoomID = room.RoomID;
+            RoomName = room.RoomName;
+            Users = new List<UserModel>();
+            foreach (var item in room.Users)
+            {
+                Users.Add(new UserModel(item));
+            }
         }
         public int RoomID { get; set; }
         public string RoomName { get; set; }

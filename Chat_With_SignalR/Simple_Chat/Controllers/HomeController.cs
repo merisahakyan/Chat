@@ -8,7 +8,7 @@ namespace Simple_Chat.Controllers
 {
     public class HomeController : Controller
     {
-        Manager manager = new Manager();
+        ManagerAsync manager = new ManagerAsync();
         public ActionResult Index()
         {
             return View();
@@ -29,7 +29,6 @@ namespace Simple_Chat.Controllers
         }
         public ActionResult ActivatePage(string token)
         {
-
             ViewData["activationmessage"] = manager.CheckingActivation(token);
             return View();
 

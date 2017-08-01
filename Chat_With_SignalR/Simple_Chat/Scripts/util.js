@@ -86,8 +86,14 @@
     }
     chat.client.showAllMessages = function (roomname, messages) {
 
-        for (var i = 0; i < messages.length; i++)
+        for (var i = 0; i < messages.length; i++) {
             AddMessage(messages[i].ID, messages[i].UserName, messages[i].Message, messages[i].Time);
+            if (messages[i].Edited) {
+                $("#datetime" + messages[i].ID).append(' edited');
+            }
+        }
+
+
         $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
     }
 
@@ -101,7 +107,9 @@
     chat.client.onEditingMsg = function (id, newmsg) {
         $("#m" + id).empty();
         $("#m" + id).append(newmsg);
-        $("#datetime" + id).append(' edited');
+        if ($("#datetime" + id).text().indexOf('edited') < 0)
+            $("#datetime" + id).append(' edited');
+
     }
     chat.client.onConnected = function (id, userName, allUsers, joinedrooms, rooms) {
         $("username").val(userName);
@@ -217,7 +225,7 @@
     }
 
     $.connection.hub.start().done(function () {
-
+        
         if (window.history && window.history.pushState) {
             window.history.pushState('forward', null, './#forward');
             $(window).on('popstate', function () {
@@ -490,6 +498,7 @@
                    $("#m" + id).hide();
                    $("#edit" + id).hide();
                    $("#datetime" + id).remove();
+
                    $("#history").empty();
                    var edit = $('<input>', {
                        id: 'foredit' + id,

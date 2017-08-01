@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatWithSignalR.Repo", "Rep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatWithSignalR.BLL", "BLL\ChatWithSignalR.BLL.csproj", "{F9DDD1FE-206C-468D-8731-0CDF5A061777}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatWithSignalR.DAL", "ChatWithSignalR.DAL\ChatWithSignalR.DAL.csproj", "{ED284C29-6086-4C4A-B2AC-64F9268CCC6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F9DDD1FE-206C-468D-8731-0CDF5A061777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9DDD1FE-206C-468D-8731-0CDF5A061777}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9DDD1FE-206C-468D-8731-0CDF5A061777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED284C29-6086-4C4A-B2AC-64F9268CCC6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED284C29-6086-4C4A-B2AC-64F9268CCC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED284C29-6086-4C4A-B2AC-64F9268CCC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED284C29-6086-4C4A-B2AC-64F9268CCC6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

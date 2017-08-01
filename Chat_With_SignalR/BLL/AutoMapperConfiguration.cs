@@ -1,17 +1,12 @@
 ﻿using AutoMapper;
 using BLL.Models;
-using Repo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ChatWithSignalR.DAL;
 
 namespace BLL
 {
     public static class AutoMapperConfiguration
     {
-        static Manager m = new Manager();
+        static ManagerAsync m = new ManagerAsync();
         public static IMapper GetMapper()
         {
             var config = new MapperConfiguration(cfg =>
@@ -19,7 +14,7 @@ namespace BLL
                 cfg.CreateMap<Room, RoomModel>()
                             .ForMember(dest => dest.RoomID, opt => opt.MapFrom(src => src.RoomID))
                             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.RoomName))
-                            .ForMember(dest => dest.Users, opt => opt.MapFrom(src => m.GetUsersByRoom(src.RoomName)));
+                            .ForMember(dest => dest.Users, opt => opt.MapFrom(src => m.GetUsersByRoom(src.RoomName).Result));
                 cfg.CreateMap<User, UserModel>()
                 .ForMember(dest => dest.active, opt => opt.MapFrom(src => src.active))
                 .ForMember(dest => dest.eMail, opt => opt.MapFrom(src => src.eMail))
@@ -31,6 +26,7 @@ namespace BLL
                 .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.MessageText))
                 .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.RoomName))
                 .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.DateTime))
+                .ForMember(dest => dest.Edited, opt => opt.MapFrom(src => src.Edited))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName));
                 cfg.CreateMap<OldMessage, HistoryModel>()
                             .ForMember(dest => dest.Edited, opt => opt.MapFrom(src => src.Time))

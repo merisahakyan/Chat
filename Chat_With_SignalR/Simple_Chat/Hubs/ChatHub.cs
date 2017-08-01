@@ -7,6 +7,7 @@
     using Providers;
     using BLL;
     using BLL.Models;
+    using System.Threading.Tasks;
 
     public class ChatHub : Hub
     {
@@ -14,29 +15,29 @@
         static string uname;
         static bool login = false;
         static string condition = "";
-        Manager manager = new Manager();
+        ManagerAsync manager = new ManagerAsync();
 
-        public void Starting(string username, string roomname)
+        public async Task Starting(string username, string roomname)
         {
             var id = Context.ConnectionId;
             UserModel user = null;
 
             if (!ReferenceEquals(username, null) && username != "")
-                user = manager.GetUserByName(username);
+                user = await manager.GetUserByName(username);
             if (condition == "join")
             {
 
-                if (!manager.RoomContainsUser(username, roomname))
+                if (!(await manager.RoomContainsUser(username, roomname)))
                 {
                     Clients.AllExcept(id).onNewRoomConnect(id, username, roomname);
-                    JoinGroup(username, roomname);
+                    await JoinGroup(username, roomname);
                 }
 
                 ActiveUsers.Where(p => p.UserName == username).First().ConnectionId = id;
-                var users = manager.GetUsersByRoom(roomname);
+                var users = await manager.GetUsersByRoom(roomname);
                 Clients.Client(id).onRoomConnected(id, username, users);
                 condition = "";
-                var messages = manager.GetMessagesByRoomName(roomname);
+                var messages = await manager.GetMessagesByRoomName(roomname);
                 Clients.Client(id).showAllMessages(roomname, messages);
             }
             else
@@ -46,8 +47,8 @@
                 {
                     ActiveUsers.Where(p => p.UserName == uname).First().ConnectionId = id;
 
-                    var jr = manager.GetRoomsByUser(username);
-                    var rooms = manager.GetRooms(username);
+                    var jr =await manager.GetRoomsByUser(username);
+                    var rooms =await manager.GetRooms(username);
 
                     Clients.Client(id).onConnected(Context.ConnectionId, username, ActiveUsers, jr, rooms);
                     if (login)
@@ -55,8 +56,8 @@
                         Clients.AllExcept(id).onNewUserConnected(id, username, roomname);
                         login = false;
                     }
-
-                    Clients.Client(id).showAllMessages("general", manager.GetMessagesByRoomName("general"));
+                    var messages = await manager.GetMessagesByRoomName("general");
+                    Clients.Client(id).showAllMessages("general", messages);
 
                 }
 
@@ -70,18 +71,18 @@
                 }
             }
         }
-        public void Send(string name, string message)
+        public async Task Send(string name, string message)
         {
             var guid = Guid.NewGuid();
-            manager.InsertMessage(guid, name, "general", message);
-            Clients.All.addMessage(manager.GetMessageByID(guid));
+            await manager.InsertMessage(guid, name, "general", message);
+            Clients.All.addMessage(await manager.GetMessageByID(guid));
         }
-        public void SendToGroup(string username, string message, string roomname)
+        public async Task SendToGroup(string username, string message, string roomname)
         {
             var guid = Guid.NewGuid();
-            manager.InsertMessage(guid, username, roomname, message);
-            Clients.All.addMessageToRoom(manager.GetMessageByID(guid));
-            var usersfornotify = manager.GetUsersByRoom(roomname);
+            await manager.InsertMessage(guid, username, roomname, message);
+            Clients.All.addMessageToRoom(await manager.GetMessageByID(guid));
+            var usersfornotify = await manager.GetUsersByRoom(roomname);
             List<string> notify = new List<string>();
             foreach (var m in usersfornotify)
             {
@@ -90,20 +91,20 @@
             }
             Clients.Clients(notify).desktopNot(roomname, username, message);
         }
-        public void EditMessage(string id, string newmessage)
+        public async Task EditMessage(string id, string newmessage)
         {
-            manager.EditMessage(Guid.Parse(id), newmessage);
+            await manager.EditMessage(Guid.Parse(id), newmessage);
             Clients.All.onEditingMsg(id, newmessage);
         }
 
-        public void Connect(string username, string password)
+        public async Task Connect(string username, string password)
         {
             var id = Context.ConnectionId;
             uname = username;
             login = true;
             if (ActiveUsers.All(x => x.ConnectionId != id) && ActiveUsers.All(x => x.UserName != username))
             {
-                if (manager.Login(username, password) && manager.GetUserByName(username).active)
+                if (await manager.Login(username, password) && (await manager.GetUserByName(username)).active)
                 {
                     ActiveUsers.Add(new UserModel() { ConnectionId = id, UserName = username, Password = password });
                     Clients.Caller.onLogin();
@@ -118,20 +119,20 @@
                 Clients.Caller.onLoginFail();
             }
         }
-        public void Disconnect(string condition, string p)
+        public async Task Disconnect(string condition, string p)
         {
             var id = Context.ConnectionId;
-            base.OnDisconnected(true);
+            await base.OnDisconnected(true);
             if (condition == "join")
             {
                 ChatHub.condition = condition;
             }
         }
-        public void Create(string group)
+        public async Task Create(string group)
         {
-            if (manager.IsValidRoomName(group))
+            if (await manager.IsValidRoomName(group))
             {
-                manager.InsertRoom(group);
+                await manager.InsertRoom(group);
                 Clients.All.onNewGroupCreating(group);
             }
             else
@@ -139,40 +140,40 @@
                 Clients.Caller.failedRoomCreating();
             }
         }
-        public void JoinGroup(string username, string roomname)
+        public async Task JoinGroup(string username, string roomname)
         {
-            manager.JoinGroup(username, roomname);
+            await manager.JoinGroup(username, roomname);
             condition = "join";
         }
-        public void OutFromRoom(string username, string roomname)
+        public async Task OutFromRoom(string username, string roomname)
         {
-            manager.OutFromRoom(username, roomname);
+            await manager.OutFromRoom(username, roomname);
             Clients.All.outFromRoom(username);
             Clients.All.onRoomOut(username, roomname);
         }
-        public void OutButton(string username, string roomname)
+        public async Task OutButton(string username, string roomname)
         {
-            manager.OutFromRoom(username, roomname);
+            await manager.OutFromRoom(username, roomname);
             Clients.Caller.outRoomButton(roomname);
             Clients.All.onRoomOut(username, roomname);
         }
-        public void ToGeneral(string username, string roomname)
+        public async Task ToGeneral(string username, string roomname)
         {
-            Clients.Caller.ToGeneral(username);
+            await Clients.Caller.ToGeneral(username);
         }
-        public void GetHistory(string id)
+        public async Task GetHistory(string id)
         {
-            List<HistoryModel> history = manager.GetHistory(id);
+            List<HistoryModel> history = await manager.GetHistory(id);
             Clients.Caller.onCallingHistory(history);
         }
-        public void SubmitRegistration(string username, string password, string email)
+        public async Task SubmitRegistration(string username, string password, string email)
         {
             string tok = Guid.NewGuid().ToString();
             bool t;
-            if (manager.IsValidNameOrEmail(username, email) && username.Length < 20 && password.Length >= 6)
+            if (await manager.IsValidNameOrEmail(username, email) && username.Length < 20 && password.Length >= 6)
             {
                 MailProvider.SendMail(email, tok);
-                manager.InsertUser(username, email, password, tok, false);
+                await manager.InsertUser(username, email, password, tok, false);
                 t = true;
             }
             else
@@ -181,11 +182,11 @@
             }
             Clients.Caller.onRegistration(t);
         }
-        public void LogOut(string username)
+        public async Task LogOut(string username)
         {
             ActiveUsers.Remove(ActiveUsers.FirstOrDefault(p => p.UserName == username));
-            Clients.Caller.onLogOut();
-            Clients.All.onUserDisconnected(username);
+            await Clients.Caller.onLogOut();
+            await Clients.All.onUserDisconnected(username);
             manager.LogOut();
         }
     }

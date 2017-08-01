@@ -7,17 +7,15 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Repo
+namespace ChatWithSignalR.DAL
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class sysdiagram
+    public partial class OldMessage
     {
-        public string name { get; set; }
-        public int principal_id { get; set; }
-        public int diagram_id { get; set; }
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public System.Guid ID { get; set; }
+        public string MessageText { get; set; }
+        public System.DateTime Time { get; set; }
     }
 }

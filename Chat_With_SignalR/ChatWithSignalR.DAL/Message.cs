@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Repo
+namespace ChatWithSignalR.DAL
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +21,7 @@ namespace Repo
         public System.Guid ID { get; set; }
         public System.DateTime Time { get; set; }
         public System.DateTime DateTime { get; set; }
+        public bool Edited { get; set; }
     
         public virtual Room Room { get; set; }
         public virtual User User { get; set; }

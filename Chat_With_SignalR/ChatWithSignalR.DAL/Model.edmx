@@ -18,6 +18,7 @@
           <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Time" Type="date" Nullable="false" />
           <Property Name="DateTime" Type="datetime" Nullable="false" />
+          <Property Name="Edited" Type="bit" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'ChatData.dbo.OldMessages' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -37,14 +38,6 @@ warning 6002: The table/view 'ChatData.dbo.OldMessages' does not have a primary 
           </Key>
           <Property Name="RoomID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="RoomName" Type="varchar" MaxLength="50" Nullable="false" />
-        </EntityType>
-        <EntityType Name="RoomsUsers">
-          <Key>
-            <PropertyRef Name="RoomID" />
-            <PropertyRef Name="UserID" />
-          </Key>
-          <Property Name="RoomID" Type="int" Nullable="false" />
-          <Property Name="UserID" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -101,30 +94,6 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RoomsUser__RoomI__36B12243">
-          <End Role="Rooms" Type="Self.Rooms" Multiplicity="1" />
-          <End Role="RoomsUsers" Type="Self.RoomsUsers" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Rooms">
-              <PropertyRef Name="RoomID" />
-            </Principal>
-            <Dependent Role="RoomsUsers">
-              <PropertyRef Name="RoomID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__RoomsUser__UserI__37A5467C">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
-          <End Role="RoomsUsers" Type="Self.RoomsUsers" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="RoomsUsers">
-              <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Function Name="f_IsValidNameOrEmail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
           <Parameter Name="username" Type="varchar" Mode="In" />
           <Parameter Name="email" Type="varchar" Mode="In" />
@@ -140,35 +109,10 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
           <Parameter Name="username" Type="varchar" Mode="In" />
           <Parameter Name="roomname" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
-        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="version" Type="int" Mode="In" />
-          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
-        </Function>
-        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="version" Type="int" Mode="In" />
-          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
-        </Function>
-        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
         <Function Name="sp_EditMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
           <Parameter Name="newmessage" Type="varchar(max)" Mode="In" />
           <Parameter Name="time" Type="datetime" Mode="In" />
-        </Function>
-        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
-        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
         <Function Name="sp_InsertIntoMessages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
@@ -199,16 +143,9 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
           <Parameter Name="username" Type="varchar" Mode="In" />
           <Parameter Name="roomname" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
-        </Function>
-        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="ChatDataModelStoreContainer">
           <EntitySet Name="Messages" EntityType="Self.Messages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rooms" EntityType="Self.Rooms" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RoomsUsers" EntityType="Self.RoomsUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OldMessages" EntityType="Self.OldMessages" store:Type="Tables" store:Schema="dbo">
@@ -232,14 +169,6 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             <End Role="Users" EntitySet="Users" />
             <End Role="Messages" EntitySet="Messages" />
           </AssociationSet>
-          <AssociationSet Name="FK__RoomsUser__RoomI__36B12243" Association="Self.FK__RoomsUser__RoomI__36B12243">
-            <End Role="Rooms" EntitySet="Rooms" />
-            <End Role="RoomsUsers" EntitySet="RoomsUsers" />
-          </AssociationSet>
-          <AssociationSet Name="FK__RoomsUser__UserI__37A5467C" Association="Self.FK__RoomsUser__UserI__37A5467C">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="RoomsUsers" EntitySet="RoomsUsers" />
-          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
@@ -259,6 +188,7 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
           <Property Name="ID" Type="Guid" Nullable="false" />
           <Property Name="Time" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Edited" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Room" Relationship="Self.FK__Messages__RoomID__48CFD27E" FromRole="Messages" ToRole="Rooms" />
           <NavigationProperty Name="User" Relationship="Self.FK__Messages__UserID__47DBAE45" FromRole="Messages" ToRole="Users" />
         </EntityType>
@@ -269,7 +199,6 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
           <Property Name="RoomID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="RoomName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Messages" Relationship="Self.FK__Messages__RoomID__48CFD27E" FromRole="Rooms" ToRole="Messages" />
-          <NavigationProperty Name="Users" Relationship="Self.RoomsUsers" FromRole="Rooms" ToRole="Users" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -292,7 +221,6 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
           <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Messages" Relationship="Self.FK__Messages__UserID__47DBAE45" FromRole="Users" ToRole="Messages" />
-          <NavigationProperty Name="Rooms" Relationship="Self.RoomsUsers" FromRole="Users" ToRole="Rooms" />
         </EntityType>
         <EntityType Name="OldMessage">
           <Key>
@@ -336,10 +264,6 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="RoomsUsers">
-          <End Role="Rooms" Type="Self.Room" Multiplicity="*" />
-          <End Role="Users" Type="Self.User" Multiplicity="*" />
-        </Association>
         <EntityContainer Name="ChatDataEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Messages" EntityType="Self.Message" />
           <EntitySet Name="Rooms" EntityType="Self.Room" />
@@ -355,38 +279,10 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             <End Role="Users" EntitySet="Users" />
             <End Role="Messages" EntitySet="Messages" />
           </AssociationSet>
-          <AssociationSet Name="RoomsUsers" Association="Self.RoomsUsers">
-            <End Role="Rooms" EntitySet="Rooms" />
-            <End Role="Users" EntitySet="Users" />
-          </AssociationSet>
-          <FunctionImport Name="sp_alterdiagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-            <Parameter Name="version" Mode="In" Type="Int32" />
-            <Parameter Name="definition" Mode="In" Type="Binary" />
-          </FunctionImport>
-          <FunctionImport Name="sp_creatediagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-            <Parameter Name="version" Mode="In" Type="Int32" />
-            <Parameter Name="definition" Mode="In" Type="Binary" />
-          </FunctionImport>
-          <FunctionImport Name="sp_dropdiagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-          </FunctionImport>
           <FunctionImport Name="sp_EditMessage">
             <Parameter Name="id" Mode="In" Type="Guid" />
             <Parameter Name="newmessage" Mode="In" Type="String" />
             <Parameter Name="time" Mode="In" Type="DateTime" />
-          </FunctionImport>
-          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(ChatDataModel.sp_helpdiagramdefinition_Result)">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-          </FunctionImport>
-          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(ChatDataModel.sp_helpdiagrams_Result)">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="sp_InsertIntoMessages">
             <Parameter Name="id" Mode="In" Type="Guid" />
@@ -417,24 +313,7 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
             <Parameter Name="username" Mode="In" Type="String" />
             <Parameter Name="roomname" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="sp_renamediagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-            <Parameter Name="new_diagramname" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="sp_upgraddiagrams" />
         </EntityContainer>
-        <ComplexType Name="sp_helpdiagramdefinition_Result">
-          <Property Type="Int32" Name="version" Nullable="true" />
-          <Property Type="Binary" Name="definition" Nullable="true" />
-        </ComplexType>
-        <ComplexType Name="sp_helpdiagrams_Result">
-          <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
-          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
-          <Property Type="Int32" Name="ID" Nullable="false" />
-          <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
-          <Property Type="Int32" Name="OwnerID" Nullable="false" />
-        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -451,6 +330,7 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="Edited" ColumnName="Edited" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -502,45 +382,13 @@ warning 6002: The table/view 'ChatData.dbo.UsersRooms' does not have a primary k
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="RoomsUsers" TypeName="ChatDataModel.RoomsUsers" StoreEntitySet="RoomsUsers">
-            <EndProperty Name="Rooms">
-              <ScalarProperty Name="RoomID" ColumnName="RoomID" />
-            </EndProperty>
-            <EndProperty Name="Users">
-              <ScalarProperty Name="UserID" ColumnName="UserID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="ChatDataModel.Store.sp_alterdiagram" />
-          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="ChatDataModel.Store.sp_creatediagram" />
-          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="ChatDataModel.Store.sp_dropdiagram" />
           <FunctionImportMapping FunctionImportName="sp_EditMessage" FunctionName="ChatDataModel.Store.sp_EditMessage" />
-          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="ChatDataModel.Store.sp_helpdiagramdefinition">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="ChatDataModel.sp_helpdiagramdefinition_Result">
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="ChatDataModel.Store.sp_helpdiagrams">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="ChatDataModel.sp_helpdiagrams_Result">
-                <ScalarProperty Name="Database" ColumnName="Database" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Owner" ColumnName="Owner" />
-                <ScalarProperty Name="OwnerID" ColumnName="OwnerID" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_InsertIntoMessages" FunctionName="ChatDataModel.Store.sp_InsertIntoMessages" />
           <FunctionImportMapping FunctionImportName="sp_InsertIntoRooms" FunctionName="ChatDataModel.Store.sp_InsertIntoRooms" />
           <FunctionImportMapping FunctionImportName="sp_InsertIntoUsers" FunctionName="ChatDataModel.Store.sp_InsertIntoUsers" />
           <FunctionImportMapping FunctionImportName="sp_InsertRoomUser" FunctionName="ChatDataModel.Store.sp_InsertRoomUser" />
           <FunctionImportMapping FunctionImportName="sp_JoinGroup" FunctionName="ChatDataModel.Store.sp_JoinGroup" />
           <FunctionImportMapping FunctionImportName="sp_OutFromRoom" FunctionName="ChatDataModel.Store.sp_OutFromRoom" />
-          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="ChatDataModel.Store.sp_renamediagram" />
-          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="ChatDataModel.Store.sp_upgraddiagrams" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

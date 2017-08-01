@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Repo
+namespace ChatWithSignalR.DAL
 {
     using System;
     using System.Collections.Generic;
@@ -18,7 +18,6 @@ namespace Repo
         public Room()
         {
             this.Messages = new HashSet<Message>();
-            this.Users = new HashSet<User>();
         }
     
         public int RoomID { get; set; }
@@ -26,7 +25,5 @@ namespace Repo
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Message> Messages { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
     }
 }

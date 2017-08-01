@@ -13,5 +13,6 @@ namespace BLL.Models
         public string RoomName { get; set; }
         public string Message { get; set; }
         public DateTime Time { get; set; }
+        public bool Edited { get; set; }
     }
 }

@@ -46,10 +46,10 @@
                 {
                     ActiveUsers.Where(p => p.UserName == username).First().ConnectionId = id;
 
-                    var jr = await manager.GetRoomsByUser(username);
+                    var joinedrooms = await manager.GetRoomsByUser(username);
                     var rooms = await manager.GetRooms(username);
 
-                    Clients.Client(id).onConnected(Context.ConnectionId, username, ActiveUsers, jr, rooms);
+                    Clients.Client(id).onConnected(Context.ConnectionId, username, ActiveUsers, joinedrooms, rooms);
                     if (login)
                     {
                         Clients.AllExcept(id).onNewUserConnected(id, username, roomname);

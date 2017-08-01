@@ -73,7 +73,6 @@ namespace Repo
         {
             return await context.Rooms.FirstOrDefaultAsync(p => p.RoomName == roomname);
         }
-
         public async Task<User> GetUserByID(int id)
         {
             return await context.Users.FirstOrDefaultAsync(p => p.UserID == id);
@@ -102,7 +101,7 @@ namespace Repo
         {
             var room = await GetRoomByName(roomname);
             int id = room.RoomID;
-            return await Task.Run(() => context.Messages.Select(p => p).Where(p => p.RoomID == id).ToList());
+            return context.Messages.Select(p => p).Where(p => p.RoomID == id).ToList();
         }
         public async Task<Message> GetMessageByID(Guid id)
         {

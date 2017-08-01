@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Repo
 {
-    public class DataManager : IDisposable,IDataManager
+    public class DataManager : IDataManager
     {
         ChatDataEntities context;
         public DataManager()

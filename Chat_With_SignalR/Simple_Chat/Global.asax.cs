@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using BLL;
+using Newtonsoft.Json;
+using Repo;
+using Simple_Chat.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,15 +20,9 @@ namespace Simple_Chat
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
         }
 
-
-        //public void Session_OnEnd()
-        //{
-        //    Application.Lock();
-        //    Application["UsersOnline"] = (int)Application["UsersOnline"] - 1;
-        //    Application.UnLock();
-        //}
 
     }
 }

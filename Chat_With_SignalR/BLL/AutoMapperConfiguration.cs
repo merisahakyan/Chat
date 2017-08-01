@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using BLL.Models;
 using ChatWithSignalR.DAL;
+using Repo;
 
 namespace BLL
 {
     public static class AutoMapperConfiguration
     {
         static Manager m = new Manager();
+        
         public static IMapper GetMapper()
         {
             var config = new MapperConfiguration(cfg =>

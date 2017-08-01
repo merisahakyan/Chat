@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Repo
 {
-    public interface IDataManager
+    public interface IDataManager:IDisposable
     {
         Task<int> InsertUser(string UserName, string eMail, string Password, string token, bool active);
         Task<int> InsertMessage(Guid guid, string username, string roomname, string message);

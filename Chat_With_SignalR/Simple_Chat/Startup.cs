@@ -12,7 +12,6 @@ namespace Simple_Chat
         {
             app.MapSignalR();
             // GlobalHost.HubPipeline.AddModule(new RejoingGroupPipelineModule());
-
         }
 
     }

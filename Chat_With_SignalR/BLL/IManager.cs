@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BLL
 {
     public interface IManager
-    {
+    {   
         Task InsertUser(string UserName, string eMail, string Password, string token, bool active);
         Task InsertMessage(Guid guid, string username, string roomname, string message);
         Task EditMessage(Guid id, string newmessage);

@@ -64,10 +64,6 @@ namespace BLL
             return imapper.Map<RoomModel>(await datamanager.GetRoomByName(roomname));
         }
 
-        public async Task<UserModel> GetUserByID(int id)
-        {
-            return imapper.Map<UserModel>(await datamanager.GetUserByID(id));
-        }
         public async Task<List<HistoryModel>> GetHistory(string id)
         {
             return imapper.Map<List<HistoryModel>>(await datamanager.GetHistory(id));
@@ -89,22 +85,19 @@ namespace BLL
         {
             return await Task.Run(async () =>
             {
-                var items = await datamanager.GetRooms();
-                List<RoomModel> jr = await GetRoomsByUser(username);
+                var allrooms = await datamanager.GetRooms();
+                List<RoomModel> joinedrooms = await GetRoomsByUser(username);
                 List<RoomModel> rooms = new List<RoomModel>();
-                foreach (var item in items)
+                foreach (var item in allrooms)
                 {
                     RoomModel room = imapper.Map<RoomModel>(item);
-                    if (!jr.Contains(room))
+                    if (!joinedrooms.Contains(room))
                         rooms.Add(room);
                 }
                 return rooms;
             });
         }
-        public async Task<RoomModel> GetRoomByID(int id)
-        {
-            return imapper.Map<RoomModel>(await datamanager.GetRoomByID(id));
-        }
+
         public async Task<List<RoomModel>> GetRoomsByUser(string username)
         {
             return await Task.Run(async () =>
@@ -117,11 +110,15 @@ namespace BLL
                 }
                 return rooms;
             });
-            //return imapper.Map<List<RoomModel>>(await datamanager.GetRoomsByUser(username));
         }
         public async Task<string> CheckingActivation(string token)
         {
-            return await datamanager.CheckingActivation(token);
+            var t = await datamanager.CheckingActivation(token);
+            if (t)
+                return "You'r activated your account!";
+            else
+                return
+                    "Something went wrong!";
         }
         public void LogOut()
         {

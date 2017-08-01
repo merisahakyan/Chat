@@ -29,7 +29,7 @@ namespace Simple_Chat.Controllers
         }
         public ActionResult ActivatePage(string token)
         {
-            ViewData["activationmessage"] = manager.CheckingActivation(token);
+            ViewData["activationmessage"] = manager.CheckingActivation(token).Result;
             return View();
 
         }

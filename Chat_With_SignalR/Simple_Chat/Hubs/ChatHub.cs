@@ -12,7 +12,6 @@
     public class ChatHub : Hub
     {
         private static List<UserModel> ActiveUsers = new List<UserModel>();
-        static string uname;
         static bool login = false;
         static string condition = "";
         ManagerAsync manager = new ManagerAsync();
@@ -41,14 +40,14 @@
                 Clients.Client(id).showAllMessages(roomname, messages);
             }
             else
-            if (ActiveUsers.Where(p => p.UserName == username).Count() == 1 && uname != null && !ReferenceEquals(user, null) && condition == "")
+            if (ActiveUsers.Where(p => p.UserName == username).Count() == 1 && username != null && !ReferenceEquals(user, null) && condition == "")
             {
                 if (user.active)
                 {
-                    ActiveUsers.Where(p => p.UserName == uname).First().ConnectionId = id;
+                    ActiveUsers.Where(p => p.UserName == username).First().ConnectionId = id;
 
-                    var jr =await manager.GetRoomsByUser(username);
-                    var rooms =await manager.GetRooms(username);
+                    var jr = await manager.GetRoomsByUser(username);
+                    var rooms = await manager.GetRooms(username);
 
                     Clients.Client(id).onConnected(Context.ConnectionId, username, ActiveUsers, jr, rooms);
                     if (login)
@@ -100,7 +99,6 @@
         public async Task Connect(string username, string password)
         {
             var id = Context.ConnectionId;
-            uname = username;
             login = true;
             if (ActiveUsers.All(x => x.ConnectionId != id) && ActiveUsers.All(x => x.UserName != username))
             {

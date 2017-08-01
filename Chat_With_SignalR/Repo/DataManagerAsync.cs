@@ -131,18 +131,18 @@ namespace Repo
                 return ids;
             });
         }
-        public async Task<string> CheckingActivation(string token)
+        public async Task<bool> CheckingActivation(string token)
         {
             if (context.Users.Where(p => p.token == token).Count() == 1 && context.Users.Where(p => p.token == token).First().active == false)
             {
                 context.Users.Where(p => p.token == token).First().active = true;
                 context.Users.Where(p => p.token == token).First().token = Guid.NewGuid().ToString();
                 await context.SaveChangesAsync();
-                return "You'r activated your account!";
+                return true;
 
             }
             else
-                return "Something went wrong!";
+                return false;
         }
 
         public void Dispose()

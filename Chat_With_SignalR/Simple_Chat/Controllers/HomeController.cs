@@ -8,7 +8,7 @@ namespace Simple_Chat.Controllers
 {
     public class HomeController : Controller
     {
-        ManagerAsync manager = new ManagerAsync();
+        Manager manager = new Manager();
         public ActionResult Index()
         {
             return View();

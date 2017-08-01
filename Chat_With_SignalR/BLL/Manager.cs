@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    public class ManagerAsync
+    public class Manager : IManager
     {
-        DataManagerAsync datamanager = new DataManagerAsync();
+        readonly DataManager datamanager;
         IMapper imapper;
-        public ManagerAsync()
+
+        public Manager()
         {
             imapper = AutoMapperConfiguration.GetMapper();
+            datamanager = new DataManager();
         }
         public async Task InsertUser(string UserName, string eMail, string Password, string token, bool active)
         {

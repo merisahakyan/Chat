@@ -11,7 +11,8 @@ namespace ChatWithSignalR.DAL
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class User
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -22,6 +23,8 @@ namespace ChatWithSignalR.DAL
     
         public int UserID { get; set; }
         public string UserName { get; set; }
+        [RegularExpression(@"^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+         ErrorMessage = "Characters are not allowed.")]
         public string eMail { get; set; }
         public string Password { get; set; }
         public string token { get; set; }

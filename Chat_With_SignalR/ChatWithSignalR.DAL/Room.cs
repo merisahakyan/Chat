@@ -11,7 +11,7 @@ namespace ChatWithSignalR.DAL
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class Room
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -19,10 +19,10 @@ namespace ChatWithSignalR.DAL
         {
             this.Messages = new HashSet<Message>();
         }
-    
+
         public int RoomID { get; set; }
         public string RoomName { get; set; }
-    
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Message> Messages { get; set; }
     }

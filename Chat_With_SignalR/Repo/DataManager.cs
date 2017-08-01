@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace Repo
 {
-    public class DataManagerAsync : IDisposable
+    public class DataManager : IDisposable,IDataManager
     {
         ChatDataEntities context;
-        public DataManagerAsync()
+        public DataManager()
         {
             context = new ChatDataEntities();
         }

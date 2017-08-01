@@ -11,18 +11,27 @@ namespace ChatWithSignalR.DAL
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Message
     {
+        [Required]
         public int MessageID { get; set; }
+        [Required]
         public int UserID { get; set; }
+        [Required]
         public int RoomID { get; set; }
+        [Required]
         public string MessageText { get; set; }
+        [Required]
         public System.Guid ID { get; set; }
+
         public System.DateTime Time { get; set; }
+        [Required]
         public System.DateTime DateTime { get; set; }
+        [Required]
         public bool Edited { get; set; }
-    
+
         public virtual Room Room { get; set; }
         public virtual User User { get; set; }
     }

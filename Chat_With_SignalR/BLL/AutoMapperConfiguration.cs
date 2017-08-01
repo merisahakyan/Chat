@@ -6,7 +6,7 @@ namespace BLL
 {
     public static class AutoMapperConfiguration
     {
-        static ManagerAsync m = new ManagerAsync();
+        static Manager m = new Manager();
         public static IMapper GetMapper()
         {
             var config = new MapperConfiguration(cfg =>

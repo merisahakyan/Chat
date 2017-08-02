@@ -30,12 +30,12 @@ namespace BLL
             {
                 section.Configure(container);
             }
-            _container = container;
+            Container = container;
+            Container.RegisterType<IDataManager, DataManager>();
         }
 
         public static T Resolve<T>()
         {
-            Container.RegisterType<IDataManager, DataManager>();
             T ret = default(T);
 
             if (Container.IsRegistered(typeof(T)))

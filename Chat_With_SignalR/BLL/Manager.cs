@@ -9,28 +9,19 @@ namespace BLL
 {
     public class Manager : IManager
     {
-         IDataManager _datamanager;
+         IDataManager datamanager;
          IMapper imapper;
 
-        IDataManager datamanager {
-            get
-            {
-                if (_datamanager == null)
-                    _datamanager = new DataManager();
-                return _datamanager;
-            }
-            set
-            {
-                _datamanager=value;
-            }
+        public Manager() : this(DependencyFactory.Resolve<IDataManager>())
+        {
+            
+        }
+        public Manager(IDataManager dm)
+        {
+            imapper = AutoMapperConfiguration.GetMapper();
+            datamanager = dm;
         }
 
-        public Manager() 
-        {
-            //datamanager = new DataManager();
-            imapper = AutoMapperConfiguration.GetMapper();
-        }
-        
         public async Task InsertUser(string UserName, string eMail, string Password, string token, bool active)
         {
             await datamanager.InsertUser(UserName, eMail, Password, token, active);

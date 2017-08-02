@@ -15,21 +15,12 @@ namespace Simple_Chat.Hubs
         private static List<UserModel> ActiveUsers = new List<UserModel>();
         static bool login = false;
         static string condition = "";
-        IManager _manager;
-        IManager manager
-        {
-            get
-            {
-                if (_manager == null)
-                    _manager = new Manager();
-                return _manager;
-            }
-            set
-            {
-                _manager = value;
-            }
-        }
+        IManager manager;
 
+        public BaseHub()
+        {
+            manager = new Manager();
+        }
         public virtual async Task Starting(string username, string roomname)
         {
             var id = Context.ConnectionId;

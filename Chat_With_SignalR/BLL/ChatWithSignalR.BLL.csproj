@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoMapperConfiguration.cs" />
+    <Compile Include="DependencyFactory.cs" />
     <Compile Include="IManager.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Models\HistoryModel.cs" />

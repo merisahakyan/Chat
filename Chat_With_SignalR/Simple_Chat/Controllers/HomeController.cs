@@ -10,7 +10,6 @@ namespace Simple_Chat.Controllers
     public class HomeController : Controller
     {
         Manager manager = new Manager();
-        [Authorize]
         public ActionResult Index()
         {
             return View();

@@ -207,9 +207,14 @@
 
     }
     chat.client.onCallingHistory = function (history) {
-        for (var i = 0; i < history.length; i++) {
-            $("#history").append('<li>' + history[i].Message + '</br ><span style="font-size:60%">' + history[i].Edited.substr(0, 10) + ' ' + history[i].Edited.substr(11, 5) + '</span></li>');
+        if (history.length > 0) {
+            for (var i = 0; i < history.length; i++) {
+                $("#history").append('<li>' + history[i].Message + '</br ><span style="font-size:60%">' + history[i].Edited.substr(0, 10) + ' ' + history[i].Edited.substr(11, 5) + '</span></li>');
 
+            }
+        }
+        else {
+            $("#history").append('<li style="font-size:20px"><b>History is empty.</b><li>')
         }
         $("#closehistory").show();
     }

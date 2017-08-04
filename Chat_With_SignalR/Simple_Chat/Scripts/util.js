@@ -207,25 +207,15 @@
 
     }
     chat.client.onCallingHistory = function (history) {
-        if (history.length > 0) {
-            var b = $('<button>', {
-                text: 'Close',
-                id: 'closehistory',
-                click: function () {
-                    $("#history").empty();
-                }
-            })
-            b.css('float', 'right');
-            $("#history").append(b);
-        }
         for (var i = 0; i < history.length; i++) {
-            $("#history").append('</br><div>' + history[i].Message + '</br ><span style="font-size:60%">' + history[i].Edited.substr(0, 10) + ' ' + history[i].Edited.substr(11, 5) + '</span></div>');
+            $("#history").append('<li>' + history[i].Message + '</br ><span style="font-size:60%">' + history[i].Edited.substr(0, 10) + ' ' + history[i].Edited.substr(11, 5) + '</span></li>');
 
         }
+        $("#closehistory").show();
     }
 
     $.connection.hub.start().done(function () {
-        
+
         if (window.history && window.history.pushState) {
             window.history.pushState('forward', null, './#forward');
             $(window).on('popstate', function () {
@@ -240,7 +230,7 @@
         $("#validation").hide();
         $("#loginvalidation").hide();
         $("#roomvalidation").hide();
-
+        $("#closehistory").hide();
 
         if (sessionStorage["username"] != '' && sessionStorage["username"] != null)
             chat.server.starting(sessionStorage["username"], sessionStorage["roomname"]);
@@ -284,6 +274,7 @@
 
         }
     });
+            b.attr('class', 'btn btn-primary');
             $("#creatingdiv").append(b);
         });
 
@@ -410,6 +401,10 @@
         $("#logout").click(function () {
             chat.server.logOut(sessionStorage["username"]);
         });
+        $("#closehistory").click(function () {
+            $("#history").empty();
+            $("#closehistory").hide();
+        })
 
     });
 
@@ -418,7 +413,7 @@
             var name = roomname;
             if (name.length > 17)
                 name = roomname.substr(0, 17) + '...';
-            $("#rooms").append('<p id="' + roomname + '" title="' + roomname + '">' + name + '</p>');
+            $("#rooms").append('<li><div style="font-size:20px" id="' + roomname + '" title="' + roomname + '">' + name + '</div></li>');
 
             $("#" + roomname).mouseenter(function () {
                 var b = $('<button>',
@@ -432,6 +427,7 @@
                 }
             });
                 b.css('float', 'right');
+                b.attr('class', 'btn btn-success');
                 $("#" + roomname).append(b);
             });
             $("#" + roomname).mouseleave(function () {
@@ -445,7 +441,7 @@
         var name = roomname;
         if (name.length > 17)
             name = roomname.substr(0, 17) + '...';
-        $("#joinedrooms").append('<p id="' + roomname + '" title="' + roomname + '">' + name + '</p>');
+        $("#joinedrooms").append('<li><div style="font-size:20px"" id="' + roomname + '" title="' + roomname + '">' + name + '</div></li>');
 
         $("#" + roomname).mouseenter(function () {
             var b = $('<button>',
@@ -460,6 +456,7 @@
             }
         });
             b.css('float', 'right');
+            b.attr('class', 'btn btn-success');
             var c = $('<button>',
         {
             text: 'Out',
@@ -469,6 +466,7 @@
             }
         });
             c.css('float', 'right');
+            c.attr('class','btn btn-danger');
             $("#" + roomname).append(c);
             $("#" + roomname).append(b);
 
@@ -482,7 +480,7 @@
     }
 
     function AddMessage(id, username, message, time) {
-        $('#chatroom').append('</br><p id="' + id + '"><b>' + username + '</b >: ' + '<span id="m' + id + '">' + message + '</span>  </p>');
+        $('#chatroom').append('<li id="' + id + '"><b>' + username + '</b >: ' + '<span id="m' + id + '">' + message + '</span>  </li>');
         $("#" + id).append('<span id="datetime' + id + '" style="font-size:60%"></br>' + time.substr(0, 10) + ' ' + time.substr(11, 5) + '</span>');
         var flag = true;
         if (username == sessionStorage["username"]) {
@@ -517,10 +515,11 @@
                            }
                        }
                    })
-
+                   
                    $("#" + id).append(edit);
                }
            });
+                    b.attr('class', 'btn btn-primary');
                     b.css('float', 'right');
                     $("#" + id).append(b);
 
@@ -533,6 +532,7 @@
                         }
                     })
                     c.css('float', 'right');
+                    c.attr('class', 'btn btn-primary');
                     $("#" + id).append(c);
                 }
 
@@ -556,7 +556,7 @@ function AddUser(id, userName) {
         if (userName.length > 17) {
             var name = userName.substr(0, 17) + '...';
         }
-        $("#chatusers").append('<p id="' + userName + '"><b title="' + userName + '">' + name + '</b></p>');
+        $("#chatusers").append('<p style="font-size:20px" id="' + userName + '"><b title="' + userName + '">' + name + '</b></p>');
     }
 }
 
@@ -566,7 +566,7 @@ function AddUserToRoom(id, username) {
     var name = username;
     if (name.length > 17)
         name = username.substr(0, 17) + '...';
-    $("#members").append('<p id="' + username + '"><b title="' + username + '">' + name + '</b></p>');
+    $("#members").append('<p style="font-size:20px" id="' + username + '"><b title="' + username + '">' + name + '</b></p>');
 
 }
 function not(roomname, username, message) {

@@ -2,35 +2,58 @@
     Layout = null;
 }
 <html>
+<head>
+    <link rel="stylesheet" href="~/App_Start/Content/bootstrap.min.css" />
+</head>
 <body>
 
-
-    <div id="loginBlock">
-        <h2>Login</h2>
-        <p id="loginvalidation" style="color:red"></p>
-        Username:<br />
-        <input id="txtUserName" type="text" /><br />
-        Password:<br />
-        <input id="password" type="password" /><br />
-        <input id="btnLogin" type="button" value="Sign In" />
-    </div>
+    <form id="loginBlock">
+        
+            <h2>Login</h2>
+            <p id="loginvalidation" style="color:red"></p>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input id="txtUserName" type="text"  placeholder="Username" />
+            </div>
+            <br />
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                <input id="password" type="password" placeholder="Password" />
+            </div>
+            <br />
+            <input id="btnLogin" type="button" value="Sign In" class="btn btn-primary" />
+       
+    </form>
+    <br />
     <hr />
-    <div id="registrationform">
-        <h2>or Register</h2>
-        <p id="validation" style="color:red"></p>
-        Username:<br />
-        <input id="r_username" type="text" placeholder="less than 20 characters" /><br />
-        Password:<br />
-        <input id="r_password" type="password" placeholder="more than 6 characters" /><br />
-        eMail:<br />
-        <input id="r_email" type="email" placeholder="default@example.com" /><br />
-        <input type="button" id="submitregistration" value="Register" /><br />
+    <form id="registrationform">
+        
+            <h2>or Register</h2>
+            <p id="validation" style="color:red"></p>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input id="r_username" type="text"  placeholder="Username" />
+            </div>
+            <br />
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                <input id="r_password" type="password" placeholder="Password"  />
+            </div>
+            <br />
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input id="r_email" type="email" placeholder="default@example.com" />
+            </div>
+            <br />
+            <input type="button" id="submitregistration" value="Register" class="btn btn-primary" /><br />
 
-    </div>
+       
+    </form>
     <h4 id="activate">Activate your account!</h4>
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2-preview1.min.js"></script>
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/util.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
 </body>
 </html>

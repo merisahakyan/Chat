@@ -5,7 +5,8 @@
 
 <html>
 <head>
-    <title></title>
+    <title>@ViewData["roomname"]</title>
+    <link rel="stylesheet" href="~/App_Start/Content/bootstrap.min.css" />
 </head>
 <body>
     <div class="main">
@@ -13,39 +14,50 @@
 
         <input type="hidden" id="group" value=@ViewData["roomname"] />
         <input type="hidden" id="username" value="@ViewData["username"]" />
-        <div id="chatBody">
-            <div id="main_div">
-                <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:460px; overflow:auto; overflow-y:auto;word-wrap: break-word"></div>
-                <div id="history" style="position:absolute;left:1050px;top:0px; width:300px;height:500px; overflow:auto; overflow-y:auto;background-color:aliceblue;word-wrap: break-word">
+
+        <div id="users_div" style="background-color:aliceblue; position:absolute;width:15%;height:100%; left:0px;top:0px; overflow:auto">
+            <div id="members">
+                <div id="header">
+
+                    <b title="@ViewData["roomtitle"]"> Room  @ViewData["roomname"]</b>
+                    <p id="toGeneral" style="color:darkgray">#general</p>
 
                 </div>
-                <div id="inputForm">
-                    <input type="text" id="groupmessage" style="position:absolute; width:700px;height:40px;left:250px;top:460px" />
-                    <input type="button" id="sendgroupmessage" value="send" style="position:absolute; width:100px;height:40px;left:950px;top:460px" />
-                </div>
-            </div>
-            <div style="background-color:aliceblue; position:absolute;width:250px;height:500px; left:0px;top:0px;overflow:auto">
-                <div id="members">
-                    <div id="header">
-                        
-                            <b title="@ViewData["roomtitle"]"> Room  @ViewData["roomname"]</b>
-                            <p id="toGeneral" style="color:darkgray">#general</p>
-                       
-                    </div>
-                    <p style="color:red"><b>Members</b></p>
+                <p style="color:darkblue"><b>Members</b></p>
 
-                </div>
-                <p id="out" style="color:darkgray">#out</p>
             </div>
+            <p id="out" style="color:darkgray">#out</p>
         </div>
 
 
+
+        <div id="message_div" style="width:70%;height:100%;margin-left:15%">
+            <div id="chatroomdiv" style="height:90%; width:100%;overflow:auto; overflow-y:auto;word-wrap: break-word;">
+                <ul id="chatroom" style="list-style-type: none"></ul>
+            </div>
+
+            <div id="inputForm" style="height:10%;width:100%">
+                <input type="text" id="groupmessage" style="height:100%;width:90%" />
+                <input type="button" id="sendgroupmessage" value="send" class="btn btn-primary" style="position:absolute; height:10%;width:7%" />
+            </div>
+        </div>
+
     </div>
+
+
+    <div id="history_div" style="position:absolute; width:15%;height:100%; overflow:auto; overflow-y:auto;background-color:aliceblue;word-wrap: break-word;margin-left:85%;top:0px">
+        <button id="closehistory" class="btn btn-danger" style="float:right">
+            X
+        </button>
+        <ul id="history" style="list-style-type: none"></ul>
+    </div>
+
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2-preview1.min.js"></script>
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/util.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
 
 
 </body>

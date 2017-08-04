@@ -5,64 +5,60 @@
 
 <html>
 <head>
-    <title></title>
-    <style>
-
-    </style>
+    <title>General</title>
+    <link rel="stylesheet" href="~/App_Start/Content/bootstrap.min.css" />
 </head>
 <body>
     <input type="hidden" id="username" />
 
-    <div class="main">
-
-        <div id="chatBody">
-            <div id="main_div">
-                <div id="chatroom" style="position:absolute;left:250px;top:0px; width:800px;height:460px; overflow:auto; overflow-y:auto;word-wrap: break-word">
-
-                </div>
-                <div id="history" style="position:absolute;left:1050px;top:0px; width:300px;height:500px; overflow:auto; overflow-y:auto;background-color:aliceblue;word-wrap: break-word">
-
-                </div>
-                <div id="inputForm">
-                    <input type="text" id="message" style="position:absolute; width:700px;height:40px;left:250px;top:460px" />
-                    <input type="button" id="sendmessage" value="send" style="position:absolute; width:100px;height:40px;left:950px;top:460px" />
-                </div>
+    <div id="users_div" style="background-color:aliceblue; position:absolute;width:15%;height:100%; left:0px;top:0px; overflow:auto">
+        <div id="chatusers">
+            <div id="header">
+                <h3 id="welcome">Welcome  </h3>
+                <input type="button" id="logout" value="Log Out" class="btn btn-danger" />
             </div>
-            <div style="background-color:aliceblue; position:absolute;width:250px;height:500px; left:0px;top:0px; overflow:auto">
-                <div id="chatusers">
-                    <div id="header">
-                        <h3 id="welcome">Welcome  </h3>
-                        <input type="button" id="logout" value="Log Out"/>
-                    </div>
-                    <p style="color:red"><b>Active Users...</b></p>
+            <h3 style="color:darkblue"><b>Active Users...</b></h3>
 
-                </div>
-                <div id="allrooms">
-                    <p id="roomvalidation" style="color:red">Room already exists!</p>
-                    <div id="creatingdiv">
-                        <input type="button" style="width:200px" id="create" value="Create Room" />
-                    </div>
-                    <div style="overflow:auto">
-                        <div id="joinedrooms">
-                            <p style="color:red">Joined Rooms</p>
-                        </div>
-                        <div id="rooms">
-                            <p style="color:red">Rooms</p>
-                        </div>
-                    </div>
-
-
-                </div>
+        </div>
+        <div id="allrooms">
+            <p id="roomvalidation" style="color:red">Room already exists!</p>
+            <div id="creatingdiv" class="input-group">
+                <input type="button" style="width:200px" id="create" value="Create Room" class="btn btn-primary" />
             </div>
+            <div style="overflow:auto" class="container">
+                <h3 style="color:darkblue">Joined Rooms</h3>
+                <ul id="joinedrooms" style="list-style-type: none"></ul>
+                <h3 style="color:darkblue">Rooms</h3>
+                <ul id="rooms" style="list-style-type: none"></ul>
+            </div>
+
+
+        </div>
+    </div>
+    <div id="message_div" style="width:70%;height:100%;margin-left:15%" >
+        <div id="chatroomdiv" style="height:90%; width:100%;overflow:auto; overflow-y:auto;word-wrap: break-word;">
+            <ul id="chatroom" style="list-style-type: none"></ul>
         </div>
 
-
+        <div id="inputForm" style="height:10%;width:100%">
+            <input type="text" id="message" style="height:100%;width:90%" />
+            <input type="button" id="sendmessage" value="send" class="btn btn-primary" style="position:absolute; height:10%;width:7%" />
+        </div>
     </div>
+
+    <div id="history_div" style="position:absolute; width:15%;height:100%; overflow:auto; overflow-y:auto;background-color:aliceblue;word-wrap: break-word;margin-left:85%;top:0px">
+        <button id="closehistory" class="btn btn-danger" style="float:right">
+            X
+        </button>
+        <ul id="history" style="list-style-type: none"></ul>
+    </div>
+
+
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2-preview1.min.js"></script>
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/util.js"></script>
-
+    <script src="~/Scripts/bootstrap.min.js"></script>
 </body>
 </html>
